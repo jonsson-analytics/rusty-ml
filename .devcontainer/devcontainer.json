@@ -6,6 +6,20 @@
 	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
 	"features": {
 		"ghcr.io/devcontainers/features/rust:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mutantdino.resourcemonitor",
+				"Gruntfuggly.todo-tree",
+				"redhat.vscode-yaml",
+				"streetsidesoftware.code-spell-checker",
+				"felicio.vscode-fold",
+				"GitHub.copilot",
+				"eamodio.gitlens",
+				"jasonlhy.hungry-delete"
+			]
+		}
 	}
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
