@@ -1,6 +1,18 @@
-use crate::frontend::tokens::Token;
+mod comment;
+mod comment_or_paren;
+mod empty;
+mod identifier;
+mod string_literal;
+mod whitespace;
 
-use super::{feedable_result::FeedableResult, feedable::Feedable};
+use self::comment::Comment;
+use self::comment_or_paren::CommentOrParen;
+use self::empty::Empty;
+use self::identifier::Identifier;
+use self::string_literal::StringLiteral;
+use self::whitespace::Whitespace;
+use super::feedable::Feedable;
+use super::feedable_result::FeedableResult;
 
 pub enum State
 {
@@ -63,136 +75,5 @@ impl State
   pub fn whitespace() -> Self
   {
     Self::Whitespace(Whitespace)
-  }
-}
-
-
-struct Empty;
-impl Feedable for Empty
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    match char {
-      | None => FeedableResult::Eof,
-      | Some('(') => FeedableResult::Transition {
-        state: State::comment_or_paren(),
-        consumed: true,
-      },
-      | Some(')') => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::ParenR,
-        consumed: true,
-      },
-      | Some('{') => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::BraceL,
-        consumed: true,
-      },
-      | Some('}') => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::BraceR,
-        consumed: true,
-      },
-      | Some('[') => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::BracketL,
-        consumed: true,
-      },
-      | Some(']') => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::BracketR,
-        consumed: true,
-      },
-      | Some(' ' | '\t' | '\n' | '\r') => FeedableResult::Transition {
-        state: State::whitespace(),
-        consumed: false,
-      },
-      | Some(_) => FeedableResult::Transition {
-        state: State::identifier(),
-        consumed: false,
-      },
-    }
-  }
-}
-
-struct CommentOrParen;
-impl Feedable for CommentOrParen
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    match char {
-      | Some('*') => FeedableResult::Transition {
-        state: State::comment(),
-        consumed: true,
-      },
-      | _ => FeedableResult::Finished {
-        state: State::empty(),
-        token: Token::ParenL,
-        consumed: false,
-      },
-    }
-  }
-}
-
-struct Identifier
-{
-  buffer: Vec<char>,
-}
-impl Feedable for Identifier
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    todo!()
-  }
-}
-
-struct StringLiteral
-{
-  buffer: Vec<char>,
-}
-impl Feedable for StringLiteral
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    todo!()
-  }
-}
-
-struct Comment
-{
-  level: u64,
-}
-impl Feedable for Comment
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    todo!()
-  }
-}
-
-struct Whitespace;
-impl Feedable for Whitespace
-{
-  fn feed(
-    &mut self,
-    char: Option<char>,
-  ) -> FeedableResult
-  {
-    todo!()
   }
 }
