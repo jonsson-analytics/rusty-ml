@@ -1,3 +1,4 @@
+use crate::frontend::lexemes::Lexeme;
 use crate::frontend::tokens::Token;
 
 pub enum ParseError
@@ -5,7 +6,7 @@ pub enum ParseError
   UnexpectedToken
   {
     expected: Token,
-    actual: Token,
+    actual: Lexeme,
   },
   UnexpectedEndOfInput
   {

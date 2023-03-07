@@ -1,7 +1,7 @@
 use super::State;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
-use crate::frontend::tokens::Token;
+use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, PartialEq)]
 pub struct Empty;
@@ -20,27 +20,27 @@ impl Feedable for Empty
       },
       | Some(')') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::ParenR,
+        token: Lexeme::ParenR,
         consumed: true,
       },
       | Some('{') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::BraceL,
+        token: Lexeme::BraceL,
         consumed: true,
       },
       | Some('}') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::BraceR,
+        token: Lexeme::BraceR,
         consumed: true,
       },
       | Some('[') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::BracketL,
+        token: Lexeme::BracketL,
         consumed: true,
       },
       | Some(']') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::BracketR,
+        token: Lexeme::BracketR,
         consumed: true,
       },
       | Some(' ' | '\t' | '\n' | '\r') => FeedableResult::Transition {

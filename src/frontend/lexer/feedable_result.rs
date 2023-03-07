@@ -1,4 +1,4 @@
-use crate::frontend::tokens::Token;
+use crate::frontend::lexemes::Lexeme;
 
 use super::state::State;
 
@@ -15,7 +15,7 @@ pub enum FeedableResult
   Finished
   {
     state: State,
-    token: Token,
+    token: Lexeme,
     consumed: bool,
   },
 }

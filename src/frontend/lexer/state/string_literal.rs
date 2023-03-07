@@ -1,7 +1,7 @@
 use super::State;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
-use crate::frontend::tokens::Token;
+use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, PartialEq)]
 pub struct StringLiteral
@@ -31,7 +31,7 @@ impl Feedable for StringLiteral
     match char {
       | None => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::UnclosedString,
+        token: Lexeme::UnclosedString,
         consumed: true,
       },
       | Some('`') if self.escaped => {
@@ -41,7 +41,7 @@ impl Feedable for StringLiteral
       },
       | Some('`') => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::string(String::from_iter(self.buffer.iter())),
+        token: Lexeme::string(String::from_iter(self.buffer.iter())),
         consumed: true,
       },
       | Some('\\') => {

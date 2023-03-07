@@ -1,7 +1,7 @@
 use super::State;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
-use crate::frontend::tokens::Token;
+use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, PartialEq)]
 pub struct Identifier
@@ -11,16 +11,16 @@ pub struct Identifier
 
 impl Identifier
 {
-  fn token(&self) -> Token
+  fn token(&self) -> Lexeme
   {
     let value = String::from_iter(self.buffer.iter());
     match value.as_str() {
-      | "def" => Token::keyword("def".to_string()),
-      | "val" => Token::keyword("val".to_string()),
-      | "fun" => Token::keyword("fun".to_string()),
-      | "true" => Token::keyword("true".to_string()),
-      | "false" => Token::keyword("false".to_string()),
-      | _ => Token::identifier(value),
+      | "def" => Lexeme::keyword("def".to_string()),
+      | "val" => Lexeme::keyword("val".to_string()),
+      | "fun" => Lexeme::keyword("fun".to_string()),
+      | "true" => Lexeme::keyword("true".to_string()),
+      | "false" => Lexeme::keyword("false".to_string()),
+      | _ => Lexeme::identifier(value),
     }
   }
 }

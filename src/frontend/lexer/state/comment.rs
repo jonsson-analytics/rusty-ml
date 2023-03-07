@@ -1,7 +1,7 @@
 use super::State;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
-use crate::frontend::tokens::Token;
+use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Previous
@@ -58,7 +58,7 @@ impl Feedable for Comment
     match char {
       | None => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::UnclosedComment,
+        token: Lexeme::UnclosedComment,
         consumed: true,
       },
       | Some('*') if self.previous.is_paren_l() => {

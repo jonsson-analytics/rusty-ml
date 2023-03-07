@@ -5,7 +5,7 @@ mod state;
 
 use self::feedable_result::FeedableResult;
 use self::state::State;
-use super::tokens::Token;
+use super::lexemes::Lexeme;
 
 pub struct Lexer<'a>
 {
@@ -40,7 +40,7 @@ impl<'a> Lexer<'a>
 
 impl<'a> Iterator for Lexer<'a>
 {
-  type Item = Token;
+  type Item = Lexeme;
 
   fn next(&mut self) -> Option<Self::Item>
   {

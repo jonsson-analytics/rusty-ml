@@ -2,7 +2,8 @@ mod _specification;
 mod parse_error;
 
 pub use self::parse_error::ParseError;
-
+use super::syntax::*;
+use super::lexemes::Lexeme;
 use super::tokens::Token;
 
 pub type Result<T> = std::result::Result<T, ParseError>;
@@ -11,7 +12,7 @@ pub type Result<T> = std::result::Result<T, ParseError>;
 pub struct Parser<Lexer>
 {
   lexer: Lexer,
-  buffer: Option<Token>,
+  buffer: Option<Lexeme>,
 }
 
 impl<Lexer> Parser<Lexer>
@@ -35,7 +36,7 @@ impl<'a> Parser<super::lexer::Lexer<'a>>
 
 impl<Lexer> Iterator for Parser<Lexer>
 where
-  Lexer: Iterator<Item = Token>,
+  Lexer: Iterator<Item = Lexeme>,
 {
   type Item = TopLevel;
 
