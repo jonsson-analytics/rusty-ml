@@ -7,7 +7,7 @@ use self::feedable_result::FeedableResult;
 use self::state::State;
 use super::tokens::Token;
 
-struct Lexer<'a>
+pub struct Lexer<'a>
 {
   source: std::str::Chars<'a>,
   state: State,
