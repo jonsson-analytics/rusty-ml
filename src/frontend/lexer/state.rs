@@ -14,6 +14,7 @@ use self::whitespace::Whitespace;
 use super::feedable::Feedable;
 use super::feedable_result::FeedableResult;
 
+#[derive(Debug, PartialEq)]
 pub enum State
 {
   Empty(Empty),

@@ -2,6 +2,7 @@ use crate::frontend::tokens::Token;
 
 use super::state::State;
 
+#[derive(Debug, PartialEq)]
 pub enum FeedableResult
 {
   Eof,

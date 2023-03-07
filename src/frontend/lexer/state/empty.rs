@@ -3,6 +3,7 @@ use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
 use crate::frontend::tokens::Token;
 
+#[derive(Debug, PartialEq)]
 pub struct Empty;
 impl Feedable for Empty
 {
