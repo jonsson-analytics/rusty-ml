@@ -325,3 +325,89 @@ mod identifier
     assert_eq!(lexer.next(), None);
   }
 }
+
+#[cfg(test)]
+mod reserved_words
+{
+  use super::super::*;
+
+  #[test]
+  fn val()
+  {
+    let mut lexer = Lexer::from_str("val");
+    assert_eq!(lexer.next(), Some(Token::keyword("val".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn val_()
+  {
+    let mut lexer = Lexer::from_str("val_");
+    assert_eq!(lexer.next(), Some(Token::identifier("val_".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn def()
+  {
+    let mut lexer = Lexer::from_str("def");
+    assert_eq!(lexer.next(), Some(Token::keyword("def".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn def_()
+  {
+    let mut lexer = Lexer::from_str("def_");
+    assert_eq!(lexer.next(), Some(Token::identifier("def_".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn fun()
+  {
+    let mut lexer = Lexer::from_str("fun");
+    assert_eq!(lexer.next(), Some(Token::keyword("fun".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn fun_()
+  {
+    let mut lexer = Lexer::from_str("fun_");
+    assert_eq!(lexer.next(), Some(Token::identifier("fun_".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn r#true()
+  {
+    let mut lexer = Lexer::from_str("true");
+    assert_eq!(lexer.next(), Some(Token::keyword("true".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn r#true_()
+  {
+    let mut lexer = Lexer::from_str("true_");
+    assert_eq!(lexer.next(), Some(Token::identifier("true_".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn r#false()
+  {
+    let mut lexer = Lexer::from_str("false");
+    assert_eq!(lexer.next(), Some(Token::keyword("false".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn r#false_()
+  {
+    let mut lexer = Lexer::from_str("false_");
+    assert_eq!(lexer.next(), Some(Token::identifier("false_".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
+}

@@ -1,19 +1,25 @@
 #[derive(Debug, PartialEq)]
 pub struct Identifier
 {
-  value: String,
+  pub value: String,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct StringLiteral
 {
-  value: String,
+  pub value: String,
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Comment
 {
-  value: String,
+  pub value: String,
+}
+
+#[derive(Debug, PartialEq)]
+pub struct Keyword
+{
+  pub value: String,
 }
 
 #[derive(Debug, PartialEq)]
@@ -29,6 +35,7 @@ pub enum Token
   StringLiteral(StringLiteral),
   UnclosedString,
   UnclosedComment,
+  Keyword(Keyword),
 }
 
 impl Token
@@ -43,6 +50,13 @@ impl Token
   pub fn string(value: String) -> Self
   {
     Self::StringLiteral(StringLiteral {
+      value,
+    })
+  }
+
+  pub fn keyword(value: String) -> Self
+  {
+    Self::Keyword(Keyword {
       value,
     })
   }

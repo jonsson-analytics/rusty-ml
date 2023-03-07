@@ -9,6 +9,22 @@ pub struct Identifier
   pub buffer: Vec<char>,
 }
 
+impl Identifier
+{
+  fn token(&self) -> Token
+  {
+    let value = String::from_iter(self.buffer.iter());
+    match value.as_str() {
+      | "def" => Token::keyword("def".to_string()),
+      | "val" => Token::keyword("val".to_string()),
+      | "fun" => Token::keyword("fun".to_string()),
+      | "true" => Token::keyword("true".to_string()),
+      | "false" => Token::keyword("false".to_string()),
+      | _ => Token::identifier(value),
+    }
+  }
+}
+
 fn is_delimiting(char: char) -> bool
 {
   match char {
@@ -28,12 +44,12 @@ impl Feedable for Identifier
     match char {
       | None => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::identifier(String::from_iter(self.buffer.iter())),
+        token: self.token(),
         consumed: false,
       },
       | Some(c) if is_delimiting(c) => FeedableResult::Finished {
         state: State::empty(),
-        token: Token::identifier(String::from_iter(self.buffer.iter())),
+        token: self.token(),
         consumed: false,
       },
       | Some(c) => {
