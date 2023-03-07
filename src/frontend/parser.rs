@@ -18,6 +18,14 @@ impl<Lexer> Parser<Lexer>
   }
 }
 
+impl<'a> Parser<super::lexer::Lexer<'a>>
+{
+  pub fn from_str(str: &'a str) -> Self
+  {
+    Self::new(super::lexer::Lexer::from_str(str))
+  }
+}
+
 impl<Lexer> Iterator for Parser<Lexer>
 where
   Lexer: Iterator<Item = Token>,
