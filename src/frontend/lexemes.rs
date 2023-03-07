@@ -66,4 +66,14 @@ impl Lexeme
       value,
     }
   }
+
+  pub fn token(&self) -> &Token
+  {
+    &self.token
+  }
+
+  pub fn value(&self) -> &String
+  {
+    &self.value
+  }
 }
