@@ -31,7 +31,7 @@ impl Feedable for StringLiteral
     match char {
       | None => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::UnclosedString,
+        token: Lexeme::unclosed_string(),
         consumed: true,
       },
       | Some('`') if self.escaped => {

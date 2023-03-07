@@ -58,7 +58,7 @@ impl Feedable for Comment
     match char {
       | None => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::UnclosedComment,
+        token: Lexeme::unclosed_comment(),
         consumed: true,
       },
       | Some('*') if self.previous.is_paren_l() => {

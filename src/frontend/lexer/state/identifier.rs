@@ -15,11 +15,11 @@ impl Identifier
   {
     let value = String::from_iter(self.buffer.iter());
     match value.as_str() {
-      | "def" => Lexeme::keyword("def".to_string()),
-      | "val" => Lexeme::keyword("val".to_string()),
-      | "fun" => Lexeme::keyword("fun".to_string()),
-      | "true" => Lexeme::keyword("true".to_string()),
-      | "false" => Lexeme::keyword("false".to_string()),
+      | "def" => Lexeme::keyword("def"),
+      | "val" => Lexeme::keyword("val"),
+      | "fun" => Lexeme::keyword("fun"),
+      | "true" => Lexeme::keyword("true"),
+      | "false" => Lexeme::keyword("false"),
       | _ => Lexeme::identifier(value),
     }
   }

@@ -20,27 +20,27 @@ impl Feedable for Empty
       },
       | Some(')') => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::ParenR,
+        token: Lexeme::symbol(')'),
         consumed: true,
       },
       | Some('{') => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::BraceL,
+        token: Lexeme::symbol('{'),
         consumed: true,
       },
       | Some('}') => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::BraceR,
+        token: Lexeme::symbol('}'),
         consumed: true,
       },
       | Some('[') => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::BracketL,
+        token: Lexeme::symbol('['),
         consumed: true,
       },
       | Some(']') => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::BracketR,
+        token: Lexeme::symbol(']'),
         consumed: true,
       },
       | Some(' ' | '\t' | '\n' | '\r') => FeedableResult::Transition {

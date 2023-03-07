@@ -20,7 +20,7 @@ impl Feedable for CommentOrParen
       },
       | _ => FeedableResult::Finished {
         state: State::empty(),
-        token: Lexeme::ParenL,
+        token: Lexeme::symbol("("),
         consumed: false,
       },
     }

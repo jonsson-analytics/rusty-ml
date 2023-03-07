@@ -1,3 +1,5 @@
+use super::tokens::Token;
+
 #[derive(Debug, PartialEq)]
 pub struct Identifier
 {
@@ -23,41 +25,69 @@ pub struct Keyword
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Lexeme
+pub struct Lexeme
 {
-  ParenL,
-  ParenR,
-  BraceL,
-  BraceR,
-  BracketL,
-  BracketR,
-  Identifier(Identifier),
-  StringLiteral(StringLiteral),
-  UnclosedString,
-  UnclosedComment,
-  Keyword(Keyword),
+  token: Token,
+  value: String,
 }
 
 impl Lexeme
 {
-  pub fn identifier(value: String) -> Self
+  pub fn unclosed_comment() -> Self
   {
-    Self::Identifier(Identifier {
-      value,
-    })
+    Self {
+      token: Token::UnclosedComment,
+      value: "".to_string(),
+    }
   }
 
-  pub fn string(value: String) -> Self
+  pub fn unclosed_string() -> Self
   {
-    Self::StringLiteral(StringLiteral {
-      value,
-    })
+    Self {
+      token: Token::UnclosedString,
+      value: "".to_string(),
+    }
   }
 
-  pub fn keyword(value: String) -> Self
+  pub fn symbol<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
   {
-    Self::Keyword(Keyword {
+    let value: String = value.into();
+    Self {
+      token: Token::Symbol(value.clone()),
       value,
-    })
+    }
+  }
+
+  pub fn identifier<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    Self {
+      token: Token::Identifier,
+      value: value.into(),
+    }
+  }
+
+  pub fn string<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    Self {
+      token: Token::StringLiteral,
+      value: value.into(),
+    }
+  }
+
+  pub fn keyword<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    let value: String = value.into();
+    Self {
+      token: Token::Keyword(value.clone()),
+      value,
+    }
   }
 }

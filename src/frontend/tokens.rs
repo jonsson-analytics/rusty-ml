@@ -4,4 +4,6 @@ pub enum Token {
   Identifier,
   StringLiteral,
   Keyword(String),
+  UnclosedComment,
+  UnclosedString,
 }
