@@ -1,7 +1,12 @@
 mod _specification;
+mod parse_error;
 
-use super::syntax::TopLevel;
+pub use self::parse_error::ParseError;
+
 use super::tokens::Token;
+
+pub type Result<T> = std::result::Result<T, ParseError>;
+
 
 pub struct Parser<Lexer>
 {
