@@ -61,39 +61,29 @@ impl Feedable for Comment
         token: Token::UnclosedComment,
         consumed: true,
       },
-      | Some('*') if self.previous.is_paren_l() => FeedableResult::Transition {
-        state: State::Comment(Self {
-          level: self.level + 1,
-          previous: Previous::Irrelevant,
-        }),
-        consumed: true,
+      | Some('*') if self.previous.is_paren_l() => {
+        self.level += 1;
+        self.previous = Previous::Irrelevant;
+        FeedableResult::Continue
       },
-      | Some('*') => FeedableResult::Transition {
-        state: State::Comment(Self {
-          level: self.level,
-          previous: Previous::Star,
-        }),
-        consumed: true,
+      | Some('*') => {
+        self.previous = Previous::Star;
+        FeedableResult::Continue
       },
       | Some(')') if self.previous.is_star() => match self.level {
         | 0 => FeedableResult::Transition {
           state: State::empty(),
           consumed: true,
         },
-        | _ => FeedableResult::Transition {
-          state: State::Comment(Comment {
-            level: self.level - 1,
-            previous: Previous::Irrelevant,
-          }),
-          consumed: true,
+        | _ => {
+          self.level -= 1;
+          self.previous = Previous::Irrelevant;
+          FeedableResult::Continue
         },
       },
-      Some('(') => FeedableResult::Transition {
-        state: State::Comment(Self {
-          level: self.level,
-          previous: Previous::ParenL,
-        }),
-        consumed: true,
+      | Some('(') => {
+        self.previous = Previous::ParenL;
+        FeedableResult::Continue
       },
       | _ => FeedableResult::Continue,
     }
