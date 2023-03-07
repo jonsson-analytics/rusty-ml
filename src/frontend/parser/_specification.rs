@@ -10,12 +10,12 @@ mod top_level
     let mut parser = Parser::from_str("val foo = `bar`;");
     assert_eq!(
       parser.next(),
-      Some(TopLevel::Val(Val {
+      Some(Ok(TopLevel::Val(Val {
         name: Identifier {
           name: "foo".to_string()
         },
         value: Expression::Literal(Literal::String("bar".to_string())),
-      }))
+      })))
     );
     assert_eq!(parser.next(), None);
   }
@@ -26,12 +26,12 @@ mod top_level
     let mut parser = Parser::from_str("val foo = 10;");
     assert_eq!(
       parser.next(),
-      Some(TopLevel::Val(Val {
+      Some(Ok(TopLevel::Val(Val {
         name: Identifier {
           name: "foo".to_string()
         },
         value: Expression::Literal(Literal::Number(10.0)),
-      }))
+      })))
     );
     assert_eq!(parser.next(), None);
   }
@@ -42,12 +42,12 @@ mod top_level
     let mut parser = Parser::from_str("val foo = true;");
     assert_eq!(
       parser.next(),
-      Some(TopLevel::Val(Val {
+      Some(Ok(TopLevel::Val(Val {
         name: Identifier {
           name: "foo".to_string()
         },
         value: Expression::Literal(Literal::Boolean(true)),
-      }))
+      })))
     );
     assert_eq!(parser.next(), None);
   }
@@ -58,7 +58,7 @@ mod top_level
     let mut parser = Parser::from_str("val f = fun x -> x;");
     assert_eq!(
       parser.next(),
-      Some(TopLevel::Val(Val {
+      Some(Ok(TopLevel::Val(Val {
         name: Identifier {
           name: "f".to_string()
         },
@@ -70,7 +70,7 @@ mod top_level
             name: "x".to_string()
           })),
         }),
-      }))
+      })))
     );
     assert_eq!(parser.next(), None);
   }
@@ -81,7 +81,7 @@ mod top_level
     let mut parser = Parser::from_str("def g x -> x;");
     assert_eq!(
       parser.next(),
-      Some(TopLevel::Val(Val {
+      Some(Ok(TopLevel::Val(Val {
         name: Identifier {
           name: "g".to_string()
         },
@@ -93,7 +93,7 @@ mod top_level
             name: "x".to_string()
           })),
         }),
-      }))
+      })))
     );
     assert_eq!(parser.next(), None);
   }
