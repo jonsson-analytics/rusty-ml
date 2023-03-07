@@ -1,30 +1,6 @@
 use super::tokens::Token;
 
 #[derive(Debug, PartialEq)]
-pub struct Identifier
-{
-  pub value: String,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct StringLiteral
-{
-  pub value: String,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Comment
-{
-  pub value: String,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct Keyword
-{
-  pub value: String,
-}
-
-#[derive(Debug, PartialEq)]
 pub struct Lexeme
 {
   token: Token,
