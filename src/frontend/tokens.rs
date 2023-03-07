@@ -27,7 +27,6 @@ pub enum Token
   BracketR,
   Identifier(Identifier),
   StringLiteral(StringLiteral),
-  Comment(Comment),
   UnclosedString,
   UnclosedComment,
 }
@@ -44,13 +43,6 @@ impl Token
   pub fn string(value: String) -> Self
   {
     Self::StringLiteral(StringLiteral {
-      value,
-    })
-  }
-
-  pub fn comment(value: String) -> Self
-  {
-    Self::Comment(Comment {
       value,
     })
   }

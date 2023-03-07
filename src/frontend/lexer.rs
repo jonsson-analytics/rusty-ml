@@ -1,7 +1,7 @@
-mod feedable_result;
-mod feedable;
-mod state;
 mod _specification;
+mod feedable;
+mod feedable_result;
+mod state;
 
 use self::feedable_result::FeedableResult;
 use self::state::State;
@@ -44,9 +44,9 @@ impl<'a> Iterator for Lexer<'a>
 
   fn next(&mut self) -> Option<Self::Item>
   {
-    let mut current = self.consume_buffer_or_next();
     loop {
-      let result = self.state.feed(current);
+      let current = dbg!(self.consume_buffer_or_next());
+      let result = dbg!(self.state.feed(current));
       let consumed_input = result.consumed_input();
       if !consumed_input {
         self.buffer = current;
@@ -68,9 +68,6 @@ impl<'a> Iterator for Lexer<'a>
           self.state = state;
         },
         | FeedableResult::Continue => { /* do nothing */ },
-      }
-      if consumed_input {
-        current = self.source.next()
       }
     }
   }

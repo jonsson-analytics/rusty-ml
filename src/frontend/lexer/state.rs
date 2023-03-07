@@ -68,9 +68,7 @@ impl State
 
   pub fn comment() -> Self
   {
-    Self::Comment(Comment {
-      level: 1,
-    })
+    Self::Comment(Comment::default())
   }
 
   pub fn whitespace() -> Self
