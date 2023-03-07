@@ -47,6 +47,10 @@ impl Feedable for Empty
         state: State::whitespace(),
         consumed: false,
       },
+      | Some('`') => FeedableResult::Transition {
+        state: State::string_literal(),
+        consumed: true,
+      },
       | Some(_) => FeedableResult::Transition {
         state: State::identifier(),
         consumed: false,

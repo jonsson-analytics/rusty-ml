@@ -61,9 +61,7 @@ impl State
 
   pub fn string_literal() -> Self
   {
-    Self::StringLiteral(StringLiteral {
-      buffer: vec![],
-    })
+    Self::StringLiteral(StringLiteral::default())
   }
 
   pub fn comment() -> Self

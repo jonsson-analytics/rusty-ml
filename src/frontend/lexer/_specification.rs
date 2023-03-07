@@ -207,6 +207,14 @@ mod string
     assert_eq!(lexer.next(), Some(Token::string("foo\nbar".to_string())));
     assert_eq!(lexer.next(), None);
   }
+
+  #[test]
+  fn escaped()
+  {
+    let mut lexer = Lexer::from_str("`foo\\`bar`");
+    assert_eq!(lexer.next(), Some(Token::string("foo`bar".to_string())));
+    assert_eq!(lexer.next(), None);
+  }
 }
 
 #[cfg(test)]
