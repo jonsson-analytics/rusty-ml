@@ -1,3 +1,5 @@
+mod _specification;
+
 use super::syntax::TopLevel;
 use super::tokens::Token;
 
