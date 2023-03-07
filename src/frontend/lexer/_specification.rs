@@ -123,7 +123,7 @@ mod parentheses
   fn whitespace_then_bracket_r_then_whitespace()
   {
     let mut lexer = Lexer::from_str(" \t\r\n] \t\r\n");
-    assert_eq!(lexer.next(), Some(Token::BracketL));
+    assert_eq!(lexer.next(), Some(Token::BracketR));
     assert_eq!(lexer.next(), None);
   }
 }
@@ -153,7 +153,6 @@ mod comment
   fn closed()
   {
     let mut lexer = Lexer::from_str("(**)");
-    assert_eq!(lexer.next(), Some(Token::comment("".to_string())));
     assert_eq!(lexer.next(), None);
   }
 
@@ -161,7 +160,6 @@ mod comment
   fn closed_multiline()
   {
     let mut lexer = Lexer::from_str("(*\n\n\n*)");
-    assert_eq!(lexer.next(), Some(Token::comment("\n\n\n".to_string())));
     assert_eq!(lexer.next(), None);
   }
 
@@ -169,7 +167,6 @@ mod comment
   fn leveled_balanced()
   {
     let mut lexer = Lexer::from_str("(*(**)*)");
-    assert_eq!(lexer.next(), Some(Token::comment("(**)".to_string())));
     assert_eq!(lexer.next(), None);
   }
 
