@@ -1,6 +1,6 @@
 use super::tokens::Token;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Lexeme
 {
   token: Token,
