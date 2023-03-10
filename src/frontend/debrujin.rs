@@ -2,7 +2,7 @@ mod _specification;
 
 use super::{
   common,
-  syntax,
+  syntax, transform_into::TransformInto,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -126,17 +126,6 @@ impl TransformError
   {
     Self::FreeVariable(name.into())
   }
-}
-
-trait TransformInto<Syntax>
-{
-  type Environment;
-  type Result<T>;
-
-  fn encode(
-    &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Syntax>;
 }
 
 trait EnvironmentExt
