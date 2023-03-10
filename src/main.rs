@@ -1,3 +1,5 @@
+#![feature(assert_matches)]
+
 mod frontend;
 
 fn main()

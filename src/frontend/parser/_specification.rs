@@ -3,6 +3,7 @@ mod top_level
 {
   use super::super::*;
   use crate::frontend::syntax::*;
+  use crate::frontend::common::*;
 
   #[test]
   fn val_foo_is_str_bar()

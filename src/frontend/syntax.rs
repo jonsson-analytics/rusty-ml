@@ -1,10 +1,4 @@
-#[derive(Debug, Clone, PartialEq)]
-pub enum Literal
-{
-  String(String),
-  Number(f64),
-  Boolean(bool),
-}
+use super::common::Literal;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Identifier
@@ -23,7 +17,7 @@ pub struct Abstraction
 pub struct Application
 {
   pub abstraction: Box<Expression>,
-  pub argument: Box<Expression>,
+  pub arguments: Vec<Expression>,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -33,6 +27,25 @@ pub enum Expression
   Identifier(Identifier),
   Abstraction(Abstraction),
   Application(Application),
+}
+
+impl Expression
+{
+  pub fn literal<IntoLiteral>(value: IntoLiteral) -> Self
+  where
+    IntoLiteral: Into<Literal>,
+  {
+    Self::Literal(value.into())
+  }
+
+  pub fn identifier<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    Self::Identifier(Identifier {
+      name: value.into(),
+    })
+  }
 }
 
 #[derive(Debug, Clone, PartialEq)]
