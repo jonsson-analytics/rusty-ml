@@ -18,3 +18,17 @@ where
   Self: CanBacktrack,
 {
 }
+
+#[cfg(test)]
+mod spec
+{
+  use super::*;
+  use crate::frontend::lexer::Lexer;
+
+  #[test]
+  fn keyword_true()
+  {
+    let mut lexer = Lexer::from_str("true").with_backtracking();
+    assert_eq!(lexer.expect_boolean_true(), Ok(surface::Literal::Boolean(true)))
+  }
+}

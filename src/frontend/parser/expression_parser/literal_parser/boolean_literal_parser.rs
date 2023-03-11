@@ -23,3 +23,30 @@ where
   Self: FalseLiteralParser,
 {
 }
+
+#[cfg(test)]
+mod spec
+{
+  use super::*;
+  use crate::frontend::lexer::Lexer;
+
+  #[test]
+  fn keyword_true()
+  {
+    let mut lexer = Lexer::from_str("true").with_backtracking();
+    assert_eq!(
+      lexer.expect_boolean_literal(),
+      Ok(surface::Literal::Boolean(true))
+    )
+  }
+
+  #[test]
+  fn keyword_false()
+  {
+    let mut lexer = Lexer::from_str("false").with_backtracking();
+    assert_eq!(
+      lexer.expect_boolean_literal(),
+      Ok(surface::Literal::Boolean(false))
+    )
+  }
+}
