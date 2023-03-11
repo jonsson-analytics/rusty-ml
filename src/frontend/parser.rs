@@ -46,7 +46,12 @@ where
     computation: impl FnOnce(&mut Self) -> Result<T>,
   ) -> Result<T>
   {
-    todo!()
+    let cursor = self.cursor;
+    let result = computation(self);
+    if let Err(_) = result {
+      self.cursor = cursor;
+    }
+    return result
   }
 }
 
