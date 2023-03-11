@@ -1,6 +1,8 @@
 use crate::frontend::lexemes::Lexeme;
 use crate::frontend::tokens::Token;
 
+use super::NodeType;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParseError
 {
@@ -12,5 +14,8 @@ pub enum ParseError
   {
     expected: Token,
     actual: Lexeme,
+  },
+  Expected {
+    expected: NodeType,
   },
 }

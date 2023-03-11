@@ -1,3 +1,5 @@
-mod val;
+mod def_binding;
+mod val_binding;
 
-pub use val::Val;
+pub use def_binding::DefBinding;
+pub use val_binding::ValBinding;

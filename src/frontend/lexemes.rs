@@ -25,14 +25,11 @@ impl Lexeme
     }
   }
 
-  pub fn symbol<IntoString>(value: IntoString) -> Self
-  where
-    IntoString: Into<String>,
+  pub fn symbol(value: &'static str) -> Self
   {
-    let value: String = value.into();
     Self {
-      token: Token::Symbol(value.clone()),
-      value,
+      token: Token::Symbol(value),
+      value: value.to_string(),
     }
   }
 
@@ -56,14 +53,11 @@ impl Lexeme
     }
   }
 
-  pub fn keyword<IntoString>(value: IntoString) -> Self
-  where
-    IntoString: Into<String>,
+  pub fn keyword(value: &'static str) -> Self
   {
-    let value: String = value.into();
     Self {
-      token: Token::Keyword(value.clone()),
-      value,
+      token: Token::Keyword(value),
+      value: value.into(),
     }
   }
 

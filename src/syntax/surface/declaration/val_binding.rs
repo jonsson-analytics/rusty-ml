@@ -4,7 +4,7 @@ use crate::syntax::surface::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Val
+pub struct ValBinding
 {
   pub name: Identifier,
   pub value: Expression,

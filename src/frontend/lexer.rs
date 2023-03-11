@@ -45,8 +45,8 @@ impl<'a> Iterator for Lexer<'a>
   fn next(&mut self) -> Option<Self::Item>
   {
     loop {
-      let current = dbg!(self.consume_buffer_or_next());
-      let result = dbg!(self.state.feed(current));
+      let current = self.consume_buffer_or_next();
+      let result = self.state.feed(current);
       let consumed_input = result.consumed_input();
       if !consumed_input {
         self.buffer = current;

@@ -1,14 +1,14 @@
-pub use crate::syntax::surface::Val;
+pub use crate::syntax::surface::ValBinding;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TopLevel
 {
-  Val(Box<Val>),
+  Val(Box<ValBinding>),
 }
 
-impl From<Val> for TopLevel
+impl From<ValBinding> for TopLevel
 {
-  fn from(val: Val) -> Self
+  fn from(val: ValBinding) -> Self
   {
     Self::Val(Box::new(val))
   }

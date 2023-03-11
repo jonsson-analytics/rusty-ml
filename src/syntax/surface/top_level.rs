@@ -1,15 +1,27 @@
-use super::Val;
+use super::{
+  DefBinding,
+  ValBinding,
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TopLevel
 {
-  Val(Box<Val>),
+  DefBinding(Box<DefBinding>),
+  ValBinding(Box<ValBinding>),
 }
 
-impl From<Val> for TopLevel
+impl From<DefBinding> for TopLevel
 {
-  fn from(val: Val) -> Self
+  fn from(def: DefBinding) -> Self
   {
-    Self::Val(Box::new(val))
+    Self::DefBinding(Box::new(def))
+  }
+}
+
+impl From<ValBinding> for TopLevel
+{
+  fn from(val: ValBinding) -> Self
+  {
+    Self::ValBinding(Box::new(val))
   }
 }

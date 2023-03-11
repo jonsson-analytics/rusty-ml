@@ -1,27 +1,10 @@
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Token
 {
-  Symbol(String),
+  Symbol(&'static str),
   Identifier,
   StringLiteral,
-  Keyword(String),
+  Keyword(&'static str),
   UnclosedComment,
   UnclosedString,
-}
-
-impl Token
-{
-  pub fn symbol<IntoString>(value: IntoString) -> Self
-  where
-    IntoString: Into<String>,
-  {
-    Self::Symbol(value.into())
-  }
-
-  pub fn keyword<IntoString>(value: IntoString) -> Self
-  where
-    IntoString: Into<String>,
-  {
-    Self::Keyword(value.into())
-  }
 }
