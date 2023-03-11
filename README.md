@@ -1,6 +1,19 @@
 # rusty-ml
 
 ```rusty-ml
+
+syntax html {
+  '<' $id '>' $html '</' $id '>'
+} -> Html.$id ($html);
+
+
+val page = with html {
+  <html>
+    <head> <title> Hello </title> </head>
+    <body> <h1> Hello </h1> </body>
+  </html>
+};
+
 val foo = `bar`;
 val bar = 10;
 val baz = true;
