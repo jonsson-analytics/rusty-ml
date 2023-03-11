@@ -1,11 +1,4 @@
-mod _specification;
-
-use super::debrujin::{self, transformations::LargestFreeVariable};
-use crate::transform_into::TransformInto;
-
-trait StackFrame
-{
-}
+use super::debrujin;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value
