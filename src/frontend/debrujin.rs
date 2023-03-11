@@ -1,8 +1,9 @@
 mod _specification;
 
+use super::transform_into::TransformInto;
 use super::{
   common,
-  syntax, transform_into::TransformInto,
+  syntax,
 };
 
 #[derive(Debug, Clone, PartialEq)]
@@ -173,15 +174,14 @@ impl EnvironmentExt for Vec<String>
   }
 }
 
-impl TransformInto<Expression> for syntax::Expression
+impl TransformInto<Result<Expression, TransformError>> for syntax::Expression
 {
-  type Environment = Vec<String>;
-  type Result<T> = std::result::Result<T, TransformError>;
+  type Environment<'a> = &'a mut Vec<String>;
 
   fn encode(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Expression>
+    environment: Self::Environment<'_>,
+  ) -> Result<Expression, TransformError>
   {
     match self {
       | syntax::Expression::Literal(literal) =>
@@ -221,15 +221,14 @@ impl TransformInto<Expression> for syntax::Expression
   }
 }
 
-impl TransformInto<TopLevel> for syntax::TopLevel
+impl TransformInto<Result<TopLevel, TransformError>> for syntax::TopLevel
 {
-  type Environment = Vec<String>;
-  type Result<T> = std::result::Result<T, TransformError>;
+  type Environment<'a> = &'a mut Vec<String>;
 
-  fn encode(
+  fn encode<'a>(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<TopLevel>
+    environment: Self::Environment<'a>,
+  ) -> Result<TopLevel, TransformError>
   {
     todo!()
   }

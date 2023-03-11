@@ -1,10 +1,9 @@
-pub trait TransformInto<Syntax>
+pub trait TransformInto<Representation>
 {
-  type Environment;
-  type Result<T>;
+  type Environment<'a>;
 
-  fn encode(
+  fn encode<'a>(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Syntax>;
+    environment: Self::Environment<'a>,
+  ) -> Representation;
 }

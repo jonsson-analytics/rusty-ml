@@ -8,6 +8,7 @@ trait StackFrame
 {
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value
 {
   String(String),
@@ -22,13 +23,12 @@ pub enum Value
 
 impl TransformInto<Value> for common::Literal
 {
-  type Environment = ();
-  type Result<T> = T;
+  type Environment<'a> = ();
 
   fn encode(
     &self,
-    _environment: &mut Self::Environment,
-  ) -> Self::Result<Value>
+    _environment: Self::Environment<'_>,
+  ) -> Value
   {
     match self {
       | common::Literal::String(value) => Value::String(value.clone()),
@@ -40,27 +40,32 @@ impl TransformInto<Value> for common::Literal
 
 impl TransformInto<Value> for debrujin::Identifier
 {
-  type Environment = Vec<Value>;
-  type Result<T> = std::result::Result<T, ()>;
+  type Environment<'a> = &'a mut Vec<Value>;
 
   fn encode(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Value>
+    environment: Self::Environment<'_>,
+  ) -> Value
   {
-    todo!()
+    // todo: this is a prototype, it's not efficient
+    environment
+      .iter()
+      .rev()
+      .skip(self.name)
+      .next()
+      .cloned()
+      .unwrap_or_else(|| panic!("unbound identifier: {}", self.name))
   }
 }
 
 impl TransformInto<Value> for debrujin::Abstraction
 {
-  type Environment = Vec<Value>;
-  type Result<T> = std::result::Result<T, ()>;
+  type Environment<'a> = &'a mut Vec<Value>;
 
   fn encode(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Value>
+    environment: Self::Environment<'_>,
+  ) -> Value
   {
     todo!()
   }
@@ -68,13 +73,12 @@ impl TransformInto<Value> for debrujin::Abstraction
 
 impl TransformInto<Value> for debrujin::Application
 {
-  type Environment = Vec<Value>;
-  type Result<T> = std::result::Result<T, ()>;
+  type Environment<'a> = &'a mut Vec<Value>;
 
   fn encode(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Value>
+    environment: Self::Environment<'_>,
+  ) -> Value
   {
     todo!()
   }
@@ -82,22 +86,57 @@ impl TransformInto<Value> for debrujin::Application
 
 impl TransformInto<Value> for debrujin::Expression
 {
-  type Environment = Vec<Value>;
-  type Result<T> = std::result::Result<T, ()>;
+  type Environment<'a> = &'a mut Vec<Value>;
 
   fn encode(
     &self,
-    environment: &mut Self::Environment,
-  ) -> Self::Result<Value>
+    environment: Self::Environment<'_>,
+  ) -> Value
   {
     match self {
-      | debrujin::Expression::Literal(literal) => Ok(literal.encode(&mut ())),
-      | debrujin::Expression::Identifier(identifier) =>
-        identifier.encode(environment),
-      | debrujin::Expression::Abstraction(abstraction) =>
-        abstraction.encode(environment),
+      | debrujin::Expression::Literal(literal) => literal.encode(()),
+      | debrujin::Expression::Identifier(identifier) => todo!(),
+      | debrujin::Expression::Abstraction(abstraction) => todo!(),
       | debrujin::Expression::Application(application) =>
         application.encode(environment),
+    }
+  }
+}
+
+struct LargestFreeVariable(usize);
+
+impl TransformInto<LargestFreeVariable> for debrujin::Identifier
+{
+  type Environment<'a> = usize;
+
+  fn encode(
+    &self,
+    environment: Self::Environment<'_>,
+  ) -> LargestFreeVariable
+  {
+    LargestFreeVariable(match () {
+      | _ if self.name < environment => 0,
+      | _ => self.name - environment,
+    })
+  }
+}
+
+impl TransformInto<LargestFreeVariable> for debrujin::Expression
+{
+  type Environment<'a> = usize;
+
+  fn encode(
+    &self,
+    environment: Self::Environment<'_>,
+  ) -> LargestFreeVariable
+  {
+    match self {
+      | debrujin::Expression::Literal(_) => LargestFreeVariable(0),
+      | debrujin::Expression::Identifier(identifier) =>
+        TransformInto::<LargestFreeVariable>::encode(identifier, environment),
+      | debrujin::Expression::Identifier(_) => LargestFreeVariable(0),
+      | debrujin::Expression::Abstraction(abstraction) => todo!(),
+      | debrujin::Expression::Application(application) => todo!(),
     }
   }
 }
