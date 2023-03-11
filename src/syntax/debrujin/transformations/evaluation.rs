@@ -135,8 +135,18 @@ impl TransformInto<Evaluation> for debrujin::Abstraction
     environment: Self::Environment<'_>,
   ) -> Evaluation
   {
-    let LargestFreeVariable(name) = self.body.encode(0);
-    todo!()
+    let LargestFreeVariable(largest) = self.body.encode(1);
+    // todo: current implementation is not memory efficient
+    Evaluation(value::Value::Closure {
+      stack: environment
+        .iter()
+        .rev()
+        .take(largest)
+        .rev()
+        .map(|v| v.clone())
+        .collect::<Vec<_>>(),
+      body: self.body.clone(),
+    })
   }
 }
 
@@ -176,13 +186,12 @@ mod abstractions
     };
     let Evaluation(value) = abstraction.encode(&mut environment);
     assert_eq!(value, value::Value::Closure {
-      stack: vec![],
+      stack: vec![value::Value::String("hello".into())],
       body,
     });
   }
 
   #[test]
-  #[should_panic = "unbound identifier: 1"]
   fn unbound_closure()
   {
     let mut environment = vec![];
