@@ -3,6 +3,9 @@ use crate::frontend::lexemes::Lexeme;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
 
+const RESERVED_WORDS: [&str; 8] =
+  ["def", "val", "fun", "->", "=", ";", "true", "false"];
+
 #[derive(Debug, PartialEq)]
 pub struct Identifier
 {
@@ -14,14 +17,10 @@ impl Identifier
   fn token(&self) -> Lexeme
   {
     let value = String::from_iter(self.buffer.iter());
-    match value.as_str() {
-      | "def" => Lexeme::keyword("def"),
-      | "val" => Lexeme::keyword("val"),
-      | "fun" => Lexeme::keyword("fun"),
-      | "true" => Lexeme::keyword("true"),
-      | "false" => Lexeme::keyword("false"),
-      | _ => Lexeme::identifier(value),
-    }
+    RESERVED_WORDS
+      .iter()
+      .find(|&&word| word == value)
+      .map_or_else(|| Lexeme::identifier(value), |&word| Lexeme::keyword(word))
   }
 }
 
