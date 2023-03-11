@@ -125,14 +125,14 @@ where
   {
     self
       .expect(Token::Keyword("true"))
-      .map(|lexeme| surface::Literal::Boolean(true))
+      .map(|_| surface::Literal::Boolean(true))
   }
 
   fn expect_boolean_false(&mut self) -> Result<surface::Literal>
   {
     self
       .expect(Token::Keyword("false"))
-      .map(|lexeme| surface::Literal::Boolean(false))
+      .map(|_| surface::Literal::Boolean(false))
   }
 
   fn expect_literal(&mut self) -> Result<surface::Literal>
