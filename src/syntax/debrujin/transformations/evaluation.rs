@@ -53,6 +53,22 @@ impl Context
     representation.transform(self)
   }
 
+  pub fn load<Result>(
+    &mut self,
+    closure: &[Value],
+    with_closure: impl FnOnce(&mut Self) -> Result,
+  ) -> Result
+  {
+    self
+      .stack
+      .extend(closure.iter().cloned());
+    let result = with_closure(self);
+    for _ in 0 .. closure.len() {
+      self.stack.pop();
+    }
+    return result
+  }
+
   pub fn lookup(
     &self,
     name: usize,
@@ -291,7 +307,17 @@ impl TransformInto<Value> for debrujin::Application
     context: Self::Context<'_>,
   ) -> Value
   {
-    todo!()
+    let abstraction = self.abstraction.transform(&mut *context);
+    let argument = self.argument.transform(&mut *context);
+    match abstraction {
+      | Value::Closure {
+        stack,
+        body,
+      } => context.load(stack.as_slice(), |context| {
+        return context.load(&[argument], |context| body.transform(context))
+      }),
+      | _ => panic!("not a closure"),
+    }
   }
 }
 
