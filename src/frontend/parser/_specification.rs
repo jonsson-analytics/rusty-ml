@@ -2,8 +2,7 @@
 mod top_level
 {
   use super::super::*;
-  use crate::frontend::syntax::*;
-  use crate::frontend::common::*;
+  use crate::syntax::surface;
 
   #[test]
   fn val_foo_is_str_bar()
@@ -11,12 +10,15 @@ mod top_level
     let mut parser = Parser::from_str("val foo = `bar`;");
     assert_eq!(
       parser.next(),
-      Some(Ok(TopLevel::Val(Val {
-        name: Identifier {
-          name: "foo".to_string()
-        },
-        value: Expression::Literal(Literal::String("bar".to_string())),
-      })))
+      Some(Ok(
+        surface::Val {
+          name: surface::Identifier {
+            name: "foo".to_string()
+          },
+          value: surface::Literal::String("bar".into()).into(),
+        }
+        .into()
+      ))
     );
     assert_eq!(parser.next(), None);
   }
@@ -27,12 +29,15 @@ mod top_level
     let mut parser = Parser::from_str("val foo = 10;");
     assert_eq!(
       parser.next(),
-      Some(Ok(TopLevel::Val(Val {
-        name: Identifier {
-          name: "foo".to_string()
-        },
-        value: Expression::Literal(Literal::Number(10.0)),
-      })))
+      Some(Ok(
+        surface::Val {
+          name: surface::Identifier {
+            name: "foo".into(),
+          },
+          value: surface::Literal::Number(10.0).into(),
+        }
+        .into()
+      ))
     );
     assert_eq!(parser.next(), None);
   }
@@ -43,12 +48,15 @@ mod top_level
     let mut parser = Parser::from_str("val foo = true;");
     assert_eq!(
       parser.next(),
-      Some(Ok(TopLevel::Val(Val {
-        name: Identifier {
-          name: "foo".to_string()
-        },
-        value: Expression::Literal(Literal::Boolean(true)),
-      })))
+      Some(Ok(
+        surface::Val {
+          name: surface::Identifier {
+            name: "foo".into()
+          },
+          value: surface::Literal::Boolean(true).into(),
+        }
+        .into()
+      ))
     );
     assert_eq!(parser.next(), None);
   }
@@ -59,19 +67,24 @@ mod top_level
     let mut parser = Parser::from_str("val f = fun x -> x;");
     assert_eq!(
       parser.next(),
-      Some(Ok(TopLevel::Val(Val {
-        name: Identifier {
-          name: "f".to_string()
-        },
-        value: Expression::Abstraction(Abstraction {
-          parameters: vec![Identifier {
-            name: "x".to_string()
-          }],
-          body: Box::new(Expression::Identifier(Identifier {
-            name: "x".to_string()
-          })),
-        }),
-      })))
+      Some(Ok(
+        surface::Val {
+          name: surface::Identifier {
+            name: "f".into()
+          },
+          value: surface::Abstraction {
+            parameters: vec![surface::Identifier {
+              name: "x".into()
+            }],
+            body: surface::Identifier {
+              name: "x".into()
+            }
+            .into(),
+          }
+          .into(),
+        }
+        .into()
+      ))
     );
     assert_eq!(parser.next(), None);
   }
@@ -82,19 +95,24 @@ mod top_level
     let mut parser = Parser::from_str("def g x -> x;");
     assert_eq!(
       parser.next(),
-      Some(Ok(TopLevel::Val(Val {
-        name: Identifier {
-          name: "g".to_string()
-        },
-        value: Expression::Abstraction(Abstraction {
-          parameters: vec![Identifier {
-            name: "x".to_string()
-          }],
-          body: Box::new(Expression::Identifier(Identifier {
-            name: "x".to_string()
-          })),
-        }),
-      })))
+      Some(Ok(
+        surface::Val {
+          name: surface::Identifier {
+            name: "g".into()
+          },
+          value: surface::Abstraction {
+            parameters: vec![surface::Identifier {
+              name: "x".into()
+            }],
+            body: surface::Identifier {
+              name: "x".into()
+            }
+            .into(),
+          }
+          .into(),
+        }
+        .into()
+      ))
     );
     assert_eq!(parser.next(), None);
   }

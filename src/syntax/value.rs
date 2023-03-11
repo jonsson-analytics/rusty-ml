@@ -1,8 +1,7 @@
-use super::transform_into::TransformInto;
-use super::{
-  common,
-  debrujin,
-};
+mod _specification;
+
+use super::debrujin;
+use crate::transform_into::TransformInto;
 
 trait StackFrame
 {
@@ -21,7 +20,7 @@ pub enum Value
   },
 }
 
-impl TransformInto<Value> for common::Literal
+impl TransformInto<Value> for debrujin::Literal
 {
   type Environment<'a> = ();
 
@@ -31,9 +30,9 @@ impl TransformInto<Value> for common::Literal
   ) -> Value
   {
     match self {
-      | common::Literal::String(value) => Value::String(value.clone()),
-      | common::Literal::Number(value) => Value::F64(*value),
-      | common::Literal::Boolean(value) => Value::Bool(*value),
+      | debrujin::Literal::String(value) => Value::String(value.clone()),
+      | debrujin::Literal::Number(value) => Value::F64(*value),
+      | debrujin::Literal::Boolean(value) => Value::Bool(*value),
     }
   }
 }
@@ -99,44 +98,6 @@ impl TransformInto<Value> for debrujin::Expression
       | debrujin::Expression::Abstraction(abstraction) => todo!(),
       | debrujin::Expression::Application(application) =>
         application.encode(environment),
-    }
-  }
-}
-
-struct LargestFreeVariable(usize);
-
-impl TransformInto<LargestFreeVariable> for debrujin::Identifier
-{
-  type Environment<'a> = usize;
-
-  fn encode(
-    &self,
-    environment: Self::Environment<'_>,
-  ) -> LargestFreeVariable
-  {
-    LargestFreeVariable(match () {
-      | _ if self.name < environment => 0,
-      | _ => self.name - environment,
-    })
-  }
-}
-
-impl TransformInto<LargestFreeVariable> for debrujin::Expression
-{
-  type Environment<'a> = usize;
-
-  fn encode(
-    &self,
-    environment: Self::Environment<'_>,
-  ) -> LargestFreeVariable
-  {
-    match self {
-      | debrujin::Expression::Literal(_) => LargestFreeVariable(0),
-      | debrujin::Expression::Identifier(identifier) =>
-        TransformInto::<LargestFreeVariable>::encode(identifier, environment),
-      | debrujin::Expression::Identifier(_) => LargestFreeVariable(0),
-      | debrujin::Expression::Abstraction(abstraction) => todo!(),
-      | debrujin::Expression::Application(application) => todo!(),
     }
   }
 }
