@@ -18,19 +18,6 @@ where
       value,
     })
   }
-
-  fn expect_def_binding(&mut self) -> Result<surface::DefBinding>
-  {
-    let _ = self.expect(Token::Keyword("def"))?;
-    let name = self.expect_identifier()?;
-    let _ = self.expect(Token::Keyword("="))?;
-    let value = self.expect_expression()?;
-    let _ = self.expect(Token::Keyword(";"))?;
-    return Ok(surface::DefBinding {
-      name,
-      value,
-    })
-  }
 }
 impl<Lexer> DeclarationParser for Lexer
 where
@@ -114,34 +101,6 @@ mod tests
         surface::ValBinding {
           name: surface::Identifier {
             name: "f".into()
-          },
-          value: surface::Abstraction {
-            parameters: vec![surface::Identifier {
-              name: "x".into()
-            }],
-            body: surface::Identifier {
-              name: "x".into()
-            }
-            .into(),
-          }
-          .into(),
-        }
-        .into()
-      )
-    );
-    assert_eq!(lexer.next(), None);
-  }
-
-  #[test]
-  fn def_g_x_to_x()
-  {
-    let mut lexer = Lexer::from_str("def g = fun x -> x ;").with_backtracking();
-    assert_eq!(
-      lexer.expect_def_binding(),
-      Ok(
-        surface::DefBinding {
-          name: surface::Identifier {
-            name: "g".into()
           },
           value: surface::Abstraction {
             parameters: vec![surface::Identifier {
