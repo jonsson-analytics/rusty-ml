@@ -1,23 +1,110 @@
 use super::LargestFreeVariable;
-use crate::syntax::{
-  debrujin,
-  value,
-};
+use crate::syntax::debrujin;
 use crate::transform_into::TransformInto;
 
-pub struct Evaluation(value::Value);
-
-impl TransformInto<Evaluation> for debrujin::Expression
+pub trait Evaluate<'a>
 {
-  type Context<'a> = &'a mut Vec<value::Value>;
+  fn evaluate(
+    &self,
+    context: &'a mut Context,
+  ) -> Value;
+}
+
+impl<'a, Representation> Evaluate<'a> for Representation
+where
+  Representation: TransformInto<Value, Context<'a> = &'a mut Context>,
+{
+  fn evaluate(
+    &self,
+    context: &'a mut Context,
+  ) -> Value
+  {
+    self.transform(context)
+  }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub enum Value
+{
+  String(String),
+  Bool(bool),
+  F64(f64),
+  Closure
+  {
+    stack: Vec<Value>,
+    body: debrujin::Expression,
+  },
+}
+
+pub struct Context
+{
+  stack: Vec<Value>,
+}
+
+impl Context
+{
+  pub fn evaluate<'a, Representation>(
+    &'a mut self,
+    representation: Representation,
+  ) -> Value
+  where
+    Representation: TransformInto<Value, Context<'a> = &'a mut Context>,
+  {
+    representation.transform(self)
+  }
+
+  pub fn lookup(
+    &self,
+    name: usize,
+  ) -> Option<Value>
+  {
+    // todo: this is a prototype, it's not efficient
+    self
+      .stack
+      .iter()
+      .rev()
+      .skip(name)
+      .next()
+      .cloned()
+  }
+
+  pub fn capture(
+    &self,
+    until: usize,
+  ) -> Vec<Value>
+  {
+    self
+      .stack
+      .iter()
+      .rev()
+      .take(until)
+      .rev()
+      .cloned()
+      .collect()
+  }
+}
+
+impl Default for Context
+{
+  fn default() -> Self
+  {
+    Self {
+      stack: Vec::new(),
+    }
+  }
+}
+
+impl TransformInto<Value> for debrujin::Expression
+{
+  type Context<'a> = &'a mut Context;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> Evaluation
+  ) -> Value
   {
     match self {
-      | debrujin::Expression::Literal(literal) => literal.transform(()),
+      | debrujin::Expression::Literal(literal) => literal.transform(context),
       | debrujin::Expression::Identifier(identifier) =>
         identifier.transform(context),
       | debrujin::Expression::Abstraction(abstraction) =>
@@ -28,20 +115,20 @@ impl TransformInto<Evaluation> for debrujin::Expression
   }
 }
 
-impl TransformInto<Evaluation> for debrujin::Literal
+impl TransformInto<Value> for debrujin::Literal
 {
-  type Context<'a> = ();
+  type Context<'a> = &'a mut Context;
 
   fn transform(
     &self,
     _context: Self::Context<'_>,
-  ) -> Evaluation
+  ) -> Value
   {
-    Evaluation(match self {
-      | debrujin::Literal::String(value) => value::Value::String(value.clone()),
-      | debrujin::Literal::Number(value) => value::Value::F64(*value),
-      | debrujin::Literal::Boolean(value) => value::Value::Bool(*value),
-    })
+    match self {
+      | debrujin::Literal::String(value) => Value::String(value.clone()),
+      | debrujin::Literal::Number(value) => Value::F64(*value),
+      | debrujin::Literal::Boolean(value) => Value::Bool(*value),
+    }
   }
 }
 
@@ -54,46 +141,39 @@ mod literals
   fn string()
   {
     let literal = debrujin::Literal::String("hello".into());
-    let Evaluation(value) = literal.transform(());
-    assert_eq!(value, value::Value::String("hello".into()));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(literal), Value::String("hello".into()));
   }
 
   #[test]
   fn number()
   {
     let literal = debrujin::Literal::Number(3.14);
-    let Evaluation(value) = literal.transform(());
-    assert_eq!(value, value::Value::F64(3.14));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(literal), Value::F64(3.14));
   }
 
   #[test]
   fn boolean()
   {
     let literal = debrujin::Literal::Boolean(true);
-    let Evaluation(value) = literal.transform(());
-    assert_eq!(value, value::Value::Bool(true));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(literal), Value::Bool(true));
   }
 }
 
-impl TransformInto<Evaluation> for debrujin::Identifier
+impl TransformInto<Value> for debrujin::Identifier
 {
-  type Context<'a> = &'a mut Vec<value::Value>;
+  type Context<'a> = &'a mut Context;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> Evaluation
+  ) -> Value
   {
-    // todo: this is a prototype, it's not efficient
-    Evaluation(
-      context
-        .iter()
-        .rev()
-        .skip(self.name)
-        .next()
-        .cloned()
-        .unwrap_or_else(|| panic!("unbound identifier: {}", self.name)),
-    )
+    context
+      .lookup(self.name)
+      .expect(format!("unbound identifier: {}", self.name).as_str())
   }
 }
 
@@ -105,48 +185,41 @@ mod identifiers
   #[test]
   fn bound()
   {
-    let mut context = vec![value::Value::String("hello".into())];
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let Evaluation(value) = identifier.transform(&mut context);
-    assert_eq!(value, value::Value::String("hello".into()));
+    let mut context = Context {
+      stack: vec![Value::String("hello".into())],
+    };
+    assert_eq!(context.evaluate(identifier), Value::String("hello".into()),);
   }
 
   #[test]
   #[should_panic = "unbound identifier: 0"]
   fn unbound()
   {
-    let mut context = vec![];
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let Evaluation(value) = identifier.transform(&mut context);
-    assert_eq!(value, value::Value::String("hello".into()));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(identifier), Value::String("hello".into()),);
   }
 }
 
-impl TransformInto<Evaluation> for debrujin::Abstraction
+impl TransformInto<Value> for debrujin::Abstraction
 {
-  type Context<'a> = &'a mut Vec<value::Value>;
+  type Context<'a> = &'a mut Context;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> Evaluation
+  ) -> Value
   {
-    let LargestFreeVariable(largest) = self.body.transform(1);
-    // todo: current implementation is not memory efficient
-    Evaluation(value::Value::Closure {
-      stack: context
-        .iter()
-        .rev()
-        .take(largest)
-        .rev()
-        .map(|v| v.clone())
-        .collect::<Vec<_>>(),
+    // todo: current implementation is not efficient
+    Value::Closure {
+      stack: context.capture(self.body.largest_free_variable(1)),
       body: self.body.clone(),
-    })
+    }
   }
 }
 
@@ -158,7 +231,6 @@ mod abstractions
   #[test]
   fn own_argument()
   {
-    let mut context = vec![];
     let body: debrujin::Expression = debrujin::Identifier {
       name: 0,
     }
@@ -166,8 +238,8 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::Closure {
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(abstraction), Value::Closure {
       stack: vec![],
       body,
     });
@@ -176,7 +248,6 @@ mod abstractions
   #[test]
   fn bound_closure()
   {
-    let mut context = vec![value::Value::String("hello".into())];
     let body: debrujin::Expression = debrujin::Identifier {
       name: 1,
     }
@@ -184,9 +255,11 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::Closure {
-      stack: vec![value::Value::String("hello".into())],
+    let mut context = Context {
+      stack: vec![Value::String("hello".into())],
+    };
+    assert_eq!(context.evaluate(abstraction), Value::Closure {
+      stack: vec![Value::String("hello".into())],
       body,
     });
   }
@@ -194,7 +267,6 @@ mod abstractions
   #[test]
   fn unbound_closure()
   {
-    let mut context = vec![];
     let body: debrujin::Expression = debrujin::Identifier {
       name: 1,
     }
@@ -202,22 +274,22 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::Closure {
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(abstraction), Value::Closure {
       stack: vec![],
       body,
     });
   }
 }
 
-impl TransformInto<Evaluation> for debrujin::Application
+impl TransformInto<Value> for debrujin::Application
 {
-  type Context<'a> = &'a mut Vec<value::Value>;
+  type Context<'a> = &'a mut Context;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> Evaluation
+  ) -> Value
   {
     todo!()
   }
@@ -231,7 +303,6 @@ mod application
   #[test]
   fn own_argument()
   {
-    let mut context = vec![];
     let abstraction = debrujin::Application {
       abstraction: debrujin::Abstraction {
         body: debrujin::Identifier {
@@ -242,14 +313,13 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::String("hello".into()));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(abstraction), Value::String("hello".into()));
   }
 
   #[test]
   fn bound_closure()
   {
-    let mut context = vec![value::Value::String("foo".into())];
     let abstraction = debrujin::Application {
       abstraction: debrujin::Abstraction {
         body: debrujin::Identifier {
@@ -260,15 +330,16 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::String("foo".into()));
+    let mut context = Context {
+      stack: vec![Value::String("foo".into())],
+    };
+    assert_eq!(context.evaluate(abstraction), Value::String("foo".into()));
   }
 
   #[test]
   #[should_panic = "unbound identifier: 1"]
   fn unbound_closure()
   {
-    let mut context = vec![];
     let abstraction = debrujin::Application {
       abstraction: debrujin::Abstraction {
         body: debrujin::Identifier {
@@ -279,7 +350,7 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.transform(&mut context);
-    assert_eq!(value, value::Value::String("foo".into()));
+    let mut context = Context::default();
+    assert_eq!(context.evaluate(abstraction), Value::String("foo".into()));
   }
 }

@@ -1,19 +1,41 @@
 use crate::syntax::debrujin;
 use crate::transform_into::TransformInto;
 
-pub struct LargestFreeVariable(pub usize);
+struct LFV(pub usize);
 
-impl TransformInto<LargestFreeVariable> for debrujin::Expression
+pub trait LargestFreeVariable
+{
+  fn largest_free_variable(
+    &self,
+    context: usize,
+  ) -> usize;
+}
+
+impl<'a, Representation> LargestFreeVariable for Representation
+where
+  Representation: TransformInto<LFV, Context<'a> = usize>,
+{
+  fn largest_free_variable(
+    &self,
+    context: usize,
+  ) -> usize
+  {
+    let LFV(name) = self.transform(context);
+    return name
+  }
+}
+
+impl TransformInto<LFV> for debrujin::Expression
 {
   type Context<'a> = usize;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> LargestFreeVariable
+  ) -> LFV
   {
     match self {
-      | debrujin::Expression::Literal(_) => LargestFreeVariable(0),
+      | debrujin::Expression::Literal(_) => LFV(0),
       | debrujin::Expression::Identifier(identifier) =>
         identifier.transform(context),
       | debrujin::Expression::Abstraction(abstraction) =>
@@ -24,14 +46,14 @@ impl TransformInto<LargestFreeVariable> for debrujin::Expression
   }
 }
 
-impl TransformInto<LargestFreeVariable> for debrujin::Abstraction
+impl TransformInto<LFV> for debrujin::Abstraction
 {
   type Context<'a> = usize;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> LargestFreeVariable
+  ) -> LFV
   {
     self.body.transform(context + 1)
   }
@@ -51,7 +73,7 @@ mod abstraction
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = abstraction.transform(0);
+    let LFV(largest) = abstraction.transform(0);
     assert_eq!(largest, 0);
   }
 
@@ -64,23 +86,23 @@ mod abstraction
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = abstraction.transform(0);
+    let LFV(largest) = abstraction.transform(0);
     assert_eq!(largest, 1);
   }
 }
 
-impl TransformInto<LargestFreeVariable> for debrujin::Application
+impl TransformInto<LFV> for debrujin::Application
 {
   type Context<'a> = usize;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> LargestFreeVariable
+  ) -> LFV
   {
-    let LargestFreeVariable(abstraction) = self.abstraction.transform(context);
-    let LargestFreeVariable(argument) = self.argument.transform(context);
-    LargestFreeVariable(std::cmp::max(abstraction, argument))
+    let LFV(abstraction) = self.abstraction.transform(context);
+    let LFV(argument) = self.argument.transform(context);
+    LFV(std::cmp::max(abstraction, argument))
   }
 }
 
@@ -102,7 +124,7 @@ mod application
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = application.transform(0);
+    let LFV(largest) = application.transform(0);
     assert_eq!(largest, 2);
   }
 
@@ -119,21 +141,21 @@ mod application
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = application.transform(0);
+    let LFV(largest) = application.transform(0);
     assert_eq!(largest, 2);
   }
 }
 
-impl TransformInto<LargestFreeVariable> for debrujin::Identifier
+impl TransformInto<LFV> for debrujin::Identifier
 {
   type Context<'a> = usize;
 
   fn transform(
     &self,
     context: Self::Context<'_>,
-  ) -> LargestFreeVariable
+  ) -> LFV
   {
-    LargestFreeVariable(match () {
+    LFV(match () {
       | _ if self.name < context => 0,
       | _ => self.name + 1 - context,
     })
@@ -151,13 +173,13 @@ mod identifier
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let LargestFreeVariable(largest) = identifier.transform(1);
+    let LFV(largest) = identifier.transform(1);
     assert_eq!(largest, 0);
 
     let identifier = debrujin::Identifier {
       name: 1,
     };
-    let LargestFreeVariable(largest) = identifier.transform(2);
+    let LFV(largest) = identifier.transform(2);
     assert_eq!(largest, 0);
   }
 
@@ -167,13 +189,13 @@ mod identifier
     let identifier = debrujin::Identifier {
       name: 1,
     };
-    let LargestFreeVariable(largest) = identifier.transform(1);
+    let LFV(largest) = identifier.transform(1);
     assert_eq!(largest, 1);
 
     let identifier = debrujin::Identifier {
       name: 2,
     };
-    let LargestFreeVariable(largest) = identifier.transform(1);
+    let LFV(largest) = identifier.transform(1);
     assert_eq!(largest, 2);
   }
 }
