@@ -173,9 +173,9 @@ where
   {
     let _ = dbg!(self.expect(Token::Keyword("val")))?;
     let name = dbg!(self.expect_identifier())?;
-    let _ = dbg!(self.expect(Token::Symbol("=")))?;
+    let _ = dbg!(self.expect(Token::Keyword("=")))?;
     let value = self.expect_expression()?;
-    let _ = self.expect(Token::Symbol(";"))?;
+    let _ = self.expect(Token::Keyword(";"))?;
     return Ok(surface::ValBinding {
       name,
       value,
@@ -186,9 +186,9 @@ where
   {
     let _ = self.expect(Token::Keyword("def"))?;
     let name = self.expect_identifier()?;
-    let _ = self.expect(Token::Symbol("="))?;
+    let _ = self.expect(Token::Keyword("="))?;
     let value = self.expect_expression()?;
-    let _ = self.expect(Token::Symbol(";"))?;
+    let _ = self.expect(Token::Keyword(";"))?;
     return Ok(surface::DefBinding {
       name,
       value,
