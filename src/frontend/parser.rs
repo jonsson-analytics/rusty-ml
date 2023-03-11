@@ -1,4 +1,3 @@
-mod _specification;
 mod backtracking_iterator;
 mod can_backtrack;
 mod declaration_parser;
