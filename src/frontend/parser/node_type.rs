@@ -2,6 +2,7 @@
 pub enum NodeType
 {
   Literal,
+  BooleanLiteral,
   Expression,
   Declaration,
   ValBinding,
