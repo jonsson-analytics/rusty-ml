@@ -16,8 +16,29 @@ pub enum Value
   Closure
   {
     stack: Vec<Value>,
-    abstraction: Box<debrujin::Expression>,
+    body: debrujin::Expression,
   },
+}
+
+impl TransformInto<Value> for debrujin::Expression
+{
+  type Environment<'a> = &'a mut Vec<Value>;
+
+  fn encode(
+    &self,
+    environment: Self::Environment<'_>,
+  ) -> Value
+  {
+    match self {
+      | debrujin::Expression::Literal(literal) => literal.encode(()),
+      | debrujin::Expression::Identifier(identifier) =>
+        identifier.encode(environment),
+      | debrujin::Expression::Abstraction(abstraction) =>
+        abstraction.encode(environment),
+      | debrujin::Expression::Application(application) =>
+        application.encode(environment),
+    }
+  }
 }
 
 impl TransformInto<Value> for debrujin::Literal
@@ -34,6 +55,36 @@ impl TransformInto<Value> for debrujin::Literal
       | debrujin::Literal::Number(value) => Value::F64(*value),
       | debrujin::Literal::Boolean(value) => Value::Bool(*value),
     }
+  }
+}
+
+#[cfg(test)]
+mod literals
+{
+  use super::*;
+
+  #[test]
+  fn string()
+  {
+    let literal = debrujin::Literal::String("hello".into());
+    let value = literal.encode(());
+    assert_eq!(value, Value::String("hello".into()));
+  }
+
+  #[test]
+  fn number()
+  {
+    let literal = debrujin::Literal::Number(3.14);
+    let value = literal.encode(());
+    assert_eq!(value, Value::F64(3.14));
+  }
+
+  #[test]
+  fn boolean()
+  {
+    let literal = debrujin::Literal::Boolean(true);
+    let value = literal.encode(());
+    assert_eq!(value, Value::Bool(true));
   }
 }
 
@@ -57,6 +108,35 @@ impl TransformInto<Value> for debrujin::Identifier
   }
 }
 
+#[cfg(test)]
+mod identifiers
+{
+  use super::*;
+
+  #[test]
+  fn bound()
+  {
+    let mut environment = vec![Value::String("hello".into())];
+    let identifier = debrujin::Identifier {
+      name: 0,
+    };
+    let value = identifier.encode(&mut environment);
+    assert_eq!(value, Value::String("hello".into()));
+  }
+
+  #[test]
+  #[should_panic = "unbound identifier: 0"]
+  fn unbound()
+  {
+    let mut environment = vec![];
+    let identifier = debrujin::Identifier {
+      name: 0,
+    };
+    let value = identifier.encode(&mut environment);
+    assert_eq!(value, Value::String("hello".into()));
+  }
+}
+
 impl TransformInto<Value> for debrujin::Abstraction
 {
   type Environment<'a> = &'a mut Vec<Value>;
@@ -67,6 +147,67 @@ impl TransformInto<Value> for debrujin::Abstraction
   ) -> Value
   {
     todo!()
+  }
+}
+
+#[cfg(test)]
+mod abstractions
+{
+  use super::*;
+
+  #[test]
+  fn own_argument()
+  {
+    let mut environment = vec![];
+    let body: debrujin::Expression = debrujin::Identifier {
+      name: 0,
+    }
+    .into();
+    let abstraction = debrujin::Abstraction {
+      body: body.clone(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::Closure {
+      stack: vec![],
+      body,
+    });
+  }
+
+  #[test]
+  fn bound_closure()
+  {
+    let mut environment = vec![Value::String("hello".into())];
+    let body: debrujin::Expression = debrujin::Identifier {
+      name: 1,
+    }
+    .into();
+    let abstraction = debrujin::Abstraction {
+      body: body.clone(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::Closure {
+      stack: vec![],
+      body,
+    });
+  }
+
+  #[test]
+  #[should_panic = "unbound identifier: 1"]
+  fn unbound_closure()
+  {
+    let mut environment = vec![];
+    let body: debrujin::Expression = debrujin::Identifier {
+      name: 1,
+    }
+    .into();
+    let abstraction = debrujin::Abstraction {
+      body: body.clone(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::Closure {
+      stack: vec![],
+      body,
+    });
   }
 }
 
@@ -83,21 +224,63 @@ impl TransformInto<Value> for debrujin::Application
   }
 }
 
-impl TransformInto<Value> for debrujin::Expression
+#[cfg(test)]
+mod application
 {
-  type Environment<'a> = &'a mut Vec<Value>;
+  use super::*;
 
-  fn encode(
-    &self,
-    environment: Self::Environment<'_>,
-  ) -> Value
+  #[test]
+  fn own_argument()
   {
-    match self {
-      | debrujin::Expression::Literal(literal) => literal.encode(()),
-      | debrujin::Expression::Identifier(identifier) => todo!(),
-      | debrujin::Expression::Abstraction(abstraction) => todo!(),
-      | debrujin::Expression::Application(application) =>
-        application.encode(environment),
-    }
+    let mut environment = vec![];
+    let abstraction = debrujin::Application {
+      abstraction: debrujin::Abstraction {
+        body: debrujin::Identifier {
+          name: 0,
+        }
+        .into(),
+      }
+      .into(),
+      argument: debrujin::Literal::String("hello".into()).into(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::String("hello".into()));
+  }
+
+  #[test]
+  fn bound_closure()
+  {
+    let mut environment = vec![Value::String("foo".into())];
+    let abstraction = debrujin::Application {
+      abstraction: debrujin::Abstraction {
+        body: debrujin::Identifier {
+          name: 1,
+        }
+        .into(),
+      }
+      .into(),
+      argument: debrujin::Literal::String("hello".into()).into(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::String("foo".into()));
+  }
+
+  #[test]
+  #[should_panic = "unbound identifier: 1"]
+  fn unbound_closure()
+  {
+    let mut environment = vec![];
+    let abstraction = debrujin::Application {
+      abstraction: debrujin::Abstraction {
+        body: debrujin::Identifier {
+          name: 1,
+        }
+        .into(),
+      }
+      .into(),
+      argument: debrujin::Literal::String("hello".into()).into(),
+    };
+    let value = abstraction.encode(&mut environment);
+    assert_eq!(value, Value::String("foo".into()));
   }
 }
