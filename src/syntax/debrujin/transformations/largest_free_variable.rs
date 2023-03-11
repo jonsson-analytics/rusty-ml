@@ -5,35 +5,35 @@ pub struct LargestFreeVariable(pub usize);
 
 impl TransformInto<LargestFreeVariable> for debrujin::Expression
 {
-  type Environment<'a> = usize;
+  type Context<'a> = usize;
 
   fn transform(
     &self,
-    environment: Self::Environment<'_>,
+    context: Self::Context<'_>,
   ) -> LargestFreeVariable
   {
     match self {
       | debrujin::Expression::Literal(_) => LargestFreeVariable(0),
       | debrujin::Expression::Identifier(identifier) =>
-        identifier.transform(environment),
+        identifier.transform(context),
       | debrujin::Expression::Abstraction(abstraction) =>
-        abstraction.transform(environment),
+        abstraction.transform(context),
       | debrujin::Expression::Application(application) =>
-        application.transform(environment),
+        application.transform(context),
     }
   }
 }
 
 impl TransformInto<LargestFreeVariable> for debrujin::Abstraction
 {
-  type Environment<'a> = usize;
+  type Context<'a> = usize;
 
   fn transform(
     &self,
-    environment: Self::Environment<'_>,
+    context: Self::Context<'_>,
   ) -> LargestFreeVariable
   {
-    self.body.transform(environment + 1)
+    self.body.transform(context + 1)
   }
 }
 
@@ -71,15 +71,15 @@ mod abstraction
 
 impl TransformInto<LargestFreeVariable> for debrujin::Application
 {
-  type Environment<'a> = usize;
+  type Context<'a> = usize;
 
   fn transform(
     &self,
-    environment: Self::Environment<'_>,
+    context: Self::Context<'_>,
   ) -> LargestFreeVariable
   {
-    let LargestFreeVariable(abstraction) = self.abstraction.transform(environment);
-    let LargestFreeVariable(argument) = self.argument.transform(environment);
+    let LargestFreeVariable(abstraction) = self.abstraction.transform(context);
+    let LargestFreeVariable(argument) = self.argument.transform(context);
     LargestFreeVariable(std::cmp::max(abstraction, argument))
   }
 }
@@ -126,16 +126,16 @@ mod application
 
 impl TransformInto<LargestFreeVariable> for debrujin::Identifier
 {
-  type Environment<'a> = usize;
+  type Context<'a> = usize;
 
   fn transform(
     &self,
-    environment: Self::Environment<'_>,
+    context: Self::Context<'_>,
   ) -> LargestFreeVariable
   {
     LargestFreeVariable(match () {
-      | _ if self.name < environment => 0,
-      | _ => self.name + 1 - environment,
+      | _ if self.name < context => 0,
+      | _ => self.name + 1 - context,
     })
   }
 }

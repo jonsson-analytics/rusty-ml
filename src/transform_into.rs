@@ -1,9 +1,9 @@
 pub trait TransformInto<Representation>
 {
-  type Environment<'a>;
+  type Context<'a>;
 
   fn transform<'a>(
     &self,
-    environment: Self::Environment<'a>,
+    context: Self::Context<'a>,
   ) -> Representation;
 }

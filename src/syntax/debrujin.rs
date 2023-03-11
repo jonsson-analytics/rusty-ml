@@ -76,11 +76,11 @@ impl EnvironmentExt for Vec<String>
 
 impl TransformInto<Result<Expression, TransformError>> for surface::Expression
 {
-  type Environment<'a> = &'a mut Vec<String>;
+  type Context<'a> = &'a mut Vec<String>;
 
   fn transform(
     &self,
-    environment: Self::Environment<'_>,
+    context: Self::Context<'_>,
   ) -> Result<Expression, TransformError>
   {
     match self {
@@ -89,7 +89,7 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Expression
 
       | surface::Expression::Identifier(surface::Identifier {
         name,
-      }) => environment
+      }) => context
         .lookup(name.as_str())
         .map(|name| {
           Expression::Identifier(Identifier {
@@ -97,27 +97,27 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Expression
           })
         }),
       | surface::Expression::Abstraction(abstraction) =>
-        abstraction.transform(environment),
+        abstraction.transform(context),
       | surface::Expression::Application(application) =>
-        application.transform(environment),
+        application.transform(context),
     }
   }
 }
 
 impl TransformInto<Result<Expression, TransformError>> for surface::Application
 {
-  type Environment<'a> = &'a mut Vec<String>;
+  type Context<'a> = &'a mut Vec<String>;
 
   fn transform<'a>(
     &self,
-    environment: Self::Environment<'a>,
+    context: Self::Context<'a>,
   ) -> Result<Expression, TransformError>
   {
-    let mut abstraction = self.abstraction.transform(environment)?;
+    let mut abstraction = self.abstraction.transform(context)?;
     for argument in self.arguments.iter() {
       abstraction = Application {
         abstraction,
-        argument: argument.transform(environment)?,
+        argument: argument.transform(context)?,
       }
       .into();
     }
@@ -127,15 +127,15 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Application
 
 impl TransformInto<Result<Expression, TransformError>> for surface::Abstraction
 {
-  type Environment<'a> = &'a mut Vec<String>;
+  type Context<'a> = &'a mut Vec<String>;
 
   fn transform<'a>(
     &self,
-    environment: Self::Environment<'a>,
+    context: Self::Context<'a>,
   ) -> Result<Expression, TransformError>
   {
-    environment.with_bindings(self.parameters.as_slice(), |environment| {
-      let mut body = self.body.transform(environment)?;
+    context.with_bindings(self.parameters.as_slice(), |context| {
+      let mut body = self.body.transform(context)?;
       for _ in self.parameters.iter().rev() {
         body = Abstraction {
           body,
@@ -149,11 +149,11 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Abstraction
 
 impl TransformInto<Result<TopLevel, TransformError>> for surface::TopLevel
 {
-  type Environment<'a> = &'a mut Vec<String>;
+  type Context<'a> = &'a mut Vec<String>;
 
   fn transform<'a>(
     &self,
-    environment: Self::Environment<'a>,
+    context: Self::Context<'a>,
   ) -> Result<TopLevel, TransformError>
   {
     todo!()
