@@ -11,19 +11,19 @@ impl TransformInto<Evaluation> for debrujin::Expression
 {
   type Environment<'a> = &'a mut Vec<value::Value>;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> Evaluation
   {
     match self {
-      | debrujin::Expression::Literal(literal) => literal.encode(()),
+      | debrujin::Expression::Literal(literal) => literal.transform(()),
       | debrujin::Expression::Identifier(identifier) =>
-        identifier.encode(environment),
+        identifier.transform(environment),
       | debrujin::Expression::Abstraction(abstraction) =>
-        abstraction.encode(environment),
+        abstraction.transform(environment),
       | debrujin::Expression::Application(application) =>
-        application.encode(environment),
+        application.transform(environment),
     }
   }
 }
@@ -32,7 +32,7 @@ impl TransformInto<Evaluation> for debrujin::Literal
 {
   type Environment<'a> = ();
 
-  fn encode(
+  fn transform(
     &self,
     _environment: Self::Environment<'_>,
   ) -> Evaluation
@@ -54,7 +54,7 @@ mod literals
   fn string()
   {
     let literal = debrujin::Literal::String("hello".into());
-    let Evaluation(value) = literal.encode(());
+    let Evaluation(value) = literal.transform(());
     assert_eq!(value, value::Value::String("hello".into()));
   }
 
@@ -62,7 +62,7 @@ mod literals
   fn number()
   {
     let literal = debrujin::Literal::Number(3.14);
-    let Evaluation(value) = literal.encode(());
+    let Evaluation(value) = literal.transform(());
     assert_eq!(value, value::Value::F64(3.14));
   }
 
@@ -70,7 +70,7 @@ mod literals
   fn boolean()
   {
     let literal = debrujin::Literal::Boolean(true);
-    let Evaluation(value) = literal.encode(());
+    let Evaluation(value) = literal.transform(());
     assert_eq!(value, value::Value::Bool(true));
   }
 }
@@ -79,7 +79,7 @@ impl TransformInto<Evaluation> for debrujin::Identifier
 {
   type Environment<'a> = &'a mut Vec<value::Value>;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> Evaluation
@@ -109,7 +109,7 @@ mod identifiers
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let Evaluation(value) = identifier.encode(&mut environment);
+    let Evaluation(value) = identifier.transform(&mut environment);
     assert_eq!(value, value::Value::String("hello".into()));
   }
 
@@ -121,7 +121,7 @@ mod identifiers
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let Evaluation(value) = identifier.encode(&mut environment);
+    let Evaluation(value) = identifier.transform(&mut environment);
     assert_eq!(value, value::Value::String("hello".into()));
   }
 }
@@ -130,12 +130,12 @@ impl TransformInto<Evaluation> for debrujin::Abstraction
 {
   type Environment<'a> = &'a mut Vec<value::Value>;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> Evaluation
   {
-    let LargestFreeVariable(largest) = self.body.encode(1);
+    let LargestFreeVariable(largest) = self.body.transform(1);
     // todo: current implementation is not memory efficient
     Evaluation(value::Value::Closure {
       stack: environment
@@ -166,7 +166,7 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::Closure {
       stack: vec![],
       body,
@@ -184,7 +184,7 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::Closure {
       stack: vec![value::Value::String("hello".into())],
       body,
@@ -202,7 +202,7 @@ mod abstractions
     let abstraction = debrujin::Abstraction {
       body: body.clone(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::Closure {
       stack: vec![],
       body,
@@ -214,7 +214,7 @@ impl TransformInto<Evaluation> for debrujin::Application
 {
   type Environment<'a> = &'a mut Vec<value::Value>;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> Evaluation
@@ -242,7 +242,7 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::String("hello".into()));
   }
 
@@ -260,7 +260,7 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::String("foo".into()));
   }
 
@@ -279,7 +279,7 @@ mod application
       .into(),
       argument: debrujin::Literal::String("hello".into()).into(),
     };
-    let Evaluation(value) = abstraction.encode(&mut environment);
+    let Evaluation(value) = abstraction.transform(&mut environment);
     assert_eq!(value, value::Value::String("foo".into()));
   }
 }

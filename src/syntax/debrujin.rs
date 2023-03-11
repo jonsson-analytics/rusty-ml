@@ -78,7 +78,7 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Expression
 {
   type Environment<'a> = &'a mut Vec<String>;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> Result<Expression, TransformError>
@@ -97,9 +97,9 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Expression
           })
         }),
       | surface::Expression::Abstraction(abstraction) =>
-        abstraction.encode(environment),
+        abstraction.transform(environment),
       | surface::Expression::Application(application) =>
-        application.encode(environment),
+        application.transform(environment),
     }
   }
 }
@@ -108,16 +108,16 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Application
 {
   type Environment<'a> = &'a mut Vec<String>;
 
-  fn encode<'a>(
+  fn transform<'a>(
     &self,
     environment: Self::Environment<'a>,
   ) -> Result<Expression, TransformError>
   {
-    let mut abstraction = self.abstraction.encode(environment)?;
+    let mut abstraction = self.abstraction.transform(environment)?;
     for argument in self.arguments.iter() {
       abstraction = Application {
         abstraction,
-        argument: argument.encode(environment)?,
+        argument: argument.transform(environment)?,
       }
       .into();
     }
@@ -129,13 +129,13 @@ impl TransformInto<Result<Expression, TransformError>> for surface::Abstraction
 {
   type Environment<'a> = &'a mut Vec<String>;
 
-  fn encode<'a>(
+  fn transform<'a>(
     &self,
     environment: Self::Environment<'a>,
   ) -> Result<Expression, TransformError>
   {
     environment.with_bindings(self.parameters.as_slice(), |environment| {
-      let mut body = self.body.encode(environment)?;
+      let mut body = self.body.transform(environment)?;
       for _ in self.parameters.iter().rev() {
         body = Abstraction {
           body,
@@ -151,7 +151,7 @@ impl TransformInto<Result<TopLevel, TransformError>> for surface::TopLevel
 {
   type Environment<'a> = &'a mut Vec<String>;
 
-  fn encode<'a>(
+  fn transform<'a>(
     &self,
     environment: Self::Environment<'a>,
   ) -> Result<TopLevel, TransformError>

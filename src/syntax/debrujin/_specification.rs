@@ -14,7 +14,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::Boolean(true).into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(debrujin::Literal::Boolean(true).into()),
     );
 
@@ -22,14 +22,14 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::Boolean(false).into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(debrujin::Literal::Boolean(false).into())
     );
 
     let mut environment = vec![];
     let expression: surface::Expression = surface::Literal::Number(10.0).into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(debrujin::Literal::Number(10.0).into())
     );
 
@@ -37,7 +37,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::String("foo".into()).into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(debrujin::Literal::String("foo".into()).into())
     );
   }
@@ -51,7 +51,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Err(debrujin::TransformError::free_variable("foo"))
     );
   }
@@ -76,7 +76,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Err(debrujin::TransformError::free_variable("foo"))
     );
   }
@@ -101,7 +101,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {
@@ -137,7 +137,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.encode(&mut environment),
+      expression.transform(&mut environment),
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {

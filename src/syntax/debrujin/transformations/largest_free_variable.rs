@@ -7,7 +7,7 @@ impl TransformInto<LargestFreeVariable> for debrujin::Expression
 {
   type Environment<'a> = usize;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> LargestFreeVariable
@@ -15,11 +15,11 @@ impl TransformInto<LargestFreeVariable> for debrujin::Expression
     match self {
       | debrujin::Expression::Literal(_) => LargestFreeVariable(0),
       | debrujin::Expression::Identifier(identifier) =>
-        identifier.encode(environment),
+        identifier.transform(environment),
       | debrujin::Expression::Abstraction(abstraction) =>
-        abstraction.encode(environment),
+        abstraction.transform(environment),
       | debrujin::Expression::Application(application) =>
-        application.encode(environment),
+        application.transform(environment),
     }
   }
 }
@@ -28,12 +28,12 @@ impl TransformInto<LargestFreeVariable> for debrujin::Abstraction
 {
   type Environment<'a> = usize;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> LargestFreeVariable
   {
-    self.body.encode(environment + 1)
+    self.body.transform(environment + 1)
   }
 }
 
@@ -51,7 +51,7 @@ mod abstraction
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = abstraction.encode(0);
+    let LargestFreeVariable(largest) = abstraction.transform(0);
     assert_eq!(largest, 0);
   }
 
@@ -64,7 +64,7 @@ mod abstraction
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = abstraction.encode(0);
+    let LargestFreeVariable(largest) = abstraction.transform(0);
     assert_eq!(largest, 1);
   }
 }
@@ -73,13 +73,13 @@ impl TransformInto<LargestFreeVariable> for debrujin::Application
 {
   type Environment<'a> = usize;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> LargestFreeVariable
   {
-    let LargestFreeVariable(abstraction) = self.abstraction.encode(environment);
-    let LargestFreeVariable(argument) = self.argument.encode(environment);
+    let LargestFreeVariable(abstraction) = self.abstraction.transform(environment);
+    let LargestFreeVariable(argument) = self.argument.transform(environment);
     LargestFreeVariable(std::cmp::max(abstraction, argument))
   }
 }
@@ -102,7 +102,7 @@ mod application
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = application.encode(0);
+    let LargestFreeVariable(largest) = application.transform(0);
     assert_eq!(largest, 2);
   }
 
@@ -119,7 +119,7 @@ mod application
       }
       .into(),
     };
-    let LargestFreeVariable(largest) = application.encode(0);
+    let LargestFreeVariable(largest) = application.transform(0);
     assert_eq!(largest, 2);
   }
 }
@@ -128,7 +128,7 @@ impl TransformInto<LargestFreeVariable> for debrujin::Identifier
 {
   type Environment<'a> = usize;
 
-  fn encode(
+  fn transform(
     &self,
     environment: Self::Environment<'_>,
   ) -> LargestFreeVariable
@@ -151,13 +151,13 @@ mod identifier
     let identifier = debrujin::Identifier {
       name: 0,
     };
-    let LargestFreeVariable(largest) = identifier.encode(1);
+    let LargestFreeVariable(largest) = identifier.transform(1);
     assert_eq!(largest, 0);
 
     let identifier = debrujin::Identifier {
       name: 1,
     };
-    let LargestFreeVariable(largest) = identifier.encode(2);
+    let LargestFreeVariable(largest) = identifier.transform(2);
     assert_eq!(largest, 0);
   }
 
@@ -167,13 +167,13 @@ mod identifier
     let identifier = debrujin::Identifier {
       name: 1,
     };
-    let LargestFreeVariable(largest) = identifier.encode(1);
+    let LargestFreeVariable(largest) = identifier.transform(1);
     assert_eq!(largest, 1);
 
     let identifier = debrujin::Identifier {
       name: 2,
     };
-    let LargestFreeVariable(largest) = identifier.encode(1);
+    let LargestFreeVariable(largest) = identifier.transform(1);
     assert_eq!(largest, 2);
   }
 }
