@@ -380,6 +380,27 @@ mod reserved_words
   }
 
   #[test]
+  fn sym_eq()
+  {
+    let mut lexer = Lexer::from_str("=");
+    assert_eq!(lexer.next(), Some(Lexeme::keyword("=")));
+  }
+
+  #[test]
+  fn sym_eq_()
+  {
+    let mut lexer = Lexer::from_str("=_");
+    assert_eq!(lexer.next(), Some(Lexeme::identifier("=_")));
+  }
+
+  #[test]
+  fn _sym_eq()
+  {
+    let mut lexer = Lexer::from_str("_=");
+    assert_eq!(lexer.next(), Some(Lexeme::identifier("_=")));
+  }
+
+  #[test]
   fn r#true()
   {
     let mut lexer = Lexer::from_str("true");
