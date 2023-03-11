@@ -1,7 +1,7 @@
-use crate::frontend::transform_into::TransformInto;
-use crate::frontend::debrujin;
+use crate::transform_into::TransformInto;
+use crate::syntax::debrujin;
 
-pub struct LargestFreeVariable(usize);
+pub struct LargestFreeVariable(pub usize);
 
 impl TransformInto<LargestFreeVariable> for debrujin::Identifier
 {
