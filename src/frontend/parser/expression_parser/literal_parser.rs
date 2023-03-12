@@ -17,14 +17,11 @@ where
 {
   fn expect_literal(&mut self) -> Result<surface::Literal>
   {
-    let string_literal = self.breakpoint(|bp| bp.expect_string_literal());
-    let boolean_literal = self.expect_boolean_literal();
-
-    return string_literal
-      .or(boolean_literal)
-      .map_err(|_| ParseError::Expected {
-        expected: NodeType::Literal,
-      })
+    attempt!(self as s => s.expect_string_literal());
+    attempt!(self as s => s.expect_boolean_literal());
+    return Err(ParseError::Expected {
+      expected: NodeType::Literal,
+    })
   }
 }
 impl<Lexer> LiteralParser for Lexer

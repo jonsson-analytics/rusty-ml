@@ -1,4 +1,5 @@
 mod backtracking_iterator;
+#[macro_use]
 mod can_backtrack;
 mod declaration_parser;
 mod expect_syntax;
