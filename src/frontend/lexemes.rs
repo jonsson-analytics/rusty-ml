@@ -53,6 +53,26 @@ impl Lexeme
     }
   }
 
+  pub fn numeric<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    Self {
+      token: Token::NumericLiteral,
+      value: value.into(),
+    }
+  }
+
+  pub fn malformed_numeric<IntoString>(value: IntoString) -> Self
+  where
+    IntoString: Into<String>,
+  {
+    Self {
+      token: Token::MalformedNumericLiteral,
+      value: value.into(),
+    }
+  }
+
   pub fn keyword(value: &'static str) -> Self
   {
     Self {

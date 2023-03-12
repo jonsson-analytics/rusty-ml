@@ -2,9 +2,11 @@
 pub enum Token
 {
   Symbol(&'static str),
+  Keyword(&'static str),
   Identifier,
   StringLiteral,
-  Keyword(&'static str),
+  NumericLiteral,
+  MalformedNumericLiteral,
   UnclosedComment,
   UnclosedString,
 }

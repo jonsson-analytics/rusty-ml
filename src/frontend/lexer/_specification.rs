@@ -327,6 +327,38 @@ mod identifier
 }
 
 #[cfg(test)]
+mod numeric
+{
+  use super::super::*;
+
+  #[test]
+  fn numerics()
+  {
+    let mut lexer = Lexer::from_str(
+      "0 1 2 3 4 5 6 7 8 9 1234567890.123456890 1,234,567,890.123,456,789,0 \
+       1.1.1 10foo foo10 kmh2mph",
+    );
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("0")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("1")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("2")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("3")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("4")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("5")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("6")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("7")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("8")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("9")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("1234567890.123456890")));
+    assert_eq!(lexer.next(), Some(Lexeme::numeric("1,234,567,890.123,456,789,0")));
+    assert_eq!(lexer.next(), Some(Lexeme::malformed_numeric("1.1.1")));
+    assert_eq!(lexer.next(), Some(Lexeme::identifier("10foo")));
+    assert_eq!(lexer.next(), Some(Lexeme::identifier("foo10")));
+    assert_eq!(lexer.next(), Some(Lexeme::identifier("kmh2mph")));
+    assert_eq!(lexer.next(), None);
+  }
+}
+
+#[cfg(test)]
 mod reserved_words
 {
   use super::super::*;
