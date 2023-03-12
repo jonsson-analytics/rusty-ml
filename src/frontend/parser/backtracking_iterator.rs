@@ -103,7 +103,6 @@ mod spec
       lexer.expect(Token::Keyword("="))?;
       Ok(())
     });
-    dbg!(lexer.cursor);
     assert_eq!(
       result,
       Err(ParseError::UnexpectedToken {
