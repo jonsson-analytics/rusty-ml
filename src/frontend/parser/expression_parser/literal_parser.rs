@@ -35,3 +35,41 @@ where
   Self: CanBacktrack,
 {
 }
+
+#[cfg(test)]
+mod spec
+{
+  use super::*;
+  use crate::frontend::lexer::Lexer;
+
+  #[test]
+  fn can_parse_string_literal()
+  {
+    let mut lexer = Lexer::from_str("`foo`").with_backtracking();
+    assert_eq!(
+      lexer.expect_literal(),
+      Ok(surface::Literal::String("foo".into()))
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_boolean_literal()
+  {
+    let mut lexer = Lexer::from_str("true false").with_backtracking();
+    assert_eq!(lexer.expect_literal(), Ok(surface::Literal::Boolean(true)));
+    assert_eq!(lexer.expect_literal(), Ok(surface::Literal::Boolean(false)));
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_numeric_literal()
+  {
+    let mut lexer = Lexer::from_str("10").with_backtracking();
+    assert_eq!(
+      lexer.expect_literal(),
+      Ok(surface::Literal::Numeric("10".into()))
+    );
+    assert_eq!(lexer.next(), None);
+  }
+}

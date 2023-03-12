@@ -8,9 +8,9 @@ where
 {
   fn expect_val_binding(&mut self) -> Result<surface::ValBinding>
   {
-    let _ = dbg!(self.expect(Token::Keyword("val")))?;
-    let name = dbg!(self.expect_identifier())?;
-    let _ = dbg!(self.expect(Token::Keyword("=")))?;
+    let _ = self.expect(Token::Keyword("val"))?;
+    let name = self.expect_identifier()?;
+    let _ = self.expect(Token::Keyword("="))?;
     let value = self.expect_expression()?;
     let _ = self.expect(Token::Keyword(";"))?;
     return Ok(surface::ValBinding {
@@ -37,7 +37,7 @@ mod tests
   #[test]
   fn val_foo_is_str_bar()
   {
-    let mut lexer = Lexer::from_str("val foo = `bar`;").with_backtracking();
+    let mut lexer = Lexer::from_str("val foo = `bar` ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
       Ok(
@@ -56,7 +56,7 @@ mod tests
   #[test]
   fn val_foo_is_10()
   {
-    let mut lexer = Lexer::from_str("val foo = 10;").with_backtracking();
+    let mut lexer = Lexer::from_str("val foo = 10 ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
       Ok(
