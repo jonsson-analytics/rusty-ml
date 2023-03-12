@@ -176,7 +176,7 @@ mod spec
   }
 
   #[test]
-  fn can_parse_curried_application()
+  fn can_parse_curried_application_inner_has_one_argument()
   {
     let mut lexer = Lexer::from_str("(g (fun x -> x)) 10").with_backtracking();
     assert_eq!(
@@ -190,6 +190,35 @@ mod spec
               body: surface::Identifier::new("x").into(),
             }
             .into()],
+          }
+          .into(),
+          arguments: vec![surface::Literal::Numeric("10".into()).into()],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_curried_application_inner_has_two_arguments()
+  {
+    let mut lexer =
+      Lexer::from_str("(g (fun x -> x) 10) 10").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Application {
+            abstraction: surface::Identifier::new("g").into(),
+            arguments: vec![
+              surface::Abstraction {
+                parameters: vec![surface::Identifier::new("x")],
+                body: surface::Identifier::new("x").into(),
+              }
+              .into(),
+              surface::Literal::Numeric("10".into()).into(),
+            ],
           }
           .into(),
           arguments: vec![surface::Literal::Numeric("10".into()).into()],
