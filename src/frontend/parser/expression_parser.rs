@@ -201,6 +201,118 @@ mod spec
   }
 
   #[test]
+  fn can_parse_named_application_with_nested_application_as_first_argument()
+  {
+    let mut lexer = Lexer::from_str("f (g a b c) b c").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Application {
+              abstraction: surface::Identifier::new("g").into(),
+              arguments: vec![
+                surface::Identifier::new("a").into(),
+                surface::Identifier::new("b").into(),
+                surface::Identifier::new("c").into(),
+              ],
+            }
+            .into(),
+            surface::Identifier::new("b").into(),
+            surface::Identifier::new("c").into(),
+          ],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_named_application_with_nested_application_as_second_argument()
+  {
+    let mut lexer = Lexer::from_str("f a (g a b c) c").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Identifier::new("a").into(),
+            surface::Application {
+              abstraction: surface::Identifier::new("g").into(),
+              arguments: vec![
+                surface::Identifier::new("a").into(),
+                surface::Identifier::new("b").into(),
+                surface::Identifier::new("c").into(),
+              ],
+            }
+            .into(),
+            surface::Identifier::new("c").into(),
+          ],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_named_application_with_nested_application_as_third_argument()
+  {
+    let mut lexer = Lexer::from_str("f a b (g a b c)").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Identifier::new("a").into(),
+            surface::Identifier::new("b").into(),
+            surface::Application {
+              abstraction: surface::Identifier::new("g").into(),
+              arguments: vec![
+                surface::Identifier::new("a").into(),
+                surface::Identifier::new("b").into(),
+                surface::Identifier::new("c").into(),
+              ],
+            }
+            .into(),
+          ],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_named_application_with_nested_application_three_levels()
+  {
+    let mut lexer = Lexer::from_str("f (g (h a))").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![surface::Application {
+            abstraction: surface::Identifier::new("g").into(),
+            arguments: vec![surface::Application {
+              abstraction: surface::Identifier::new("h").into(),
+              arguments: vec![surface::Identifier::new("a").into(),],
+            }
+            .into(),],
+          }
+          .into(),],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
   fn can_parse_named_application_first_argument_is_an_application()
   {
     let mut lexer = Lexer::from_str("f (g (fun x -> x) 10) (fun x -> x) 10")
