@@ -72,6 +72,137 @@ mod spec
   }
 
   #[test]
+  fn can_parse_application()
+  {
+    // todo: fix expectations
+
+    let mut lexer = Lexer::from_str("f a b c").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Identifier::new("a").into(),
+            surface::Identifier::new("b").into(),
+            surface::Identifier::new("c").into(),
+          ],
+        }
+        .into()
+      ),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("(fun x -> x) 10").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Abstraction {
+            parameters: vec![surface::Identifier::new("x")],
+            body: surface::Identifier::new("x").into(),
+          }
+          .into(),
+          arguments: vec![surface::Literal::Numeric("10".into()).into(),],
+        }
+        .into()
+      ),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("f (fun x -> x) 10").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Abstraction {
+              parameters: vec![surface::Identifier::new("x")],
+              body: surface::Identifier::new("x").into(),
+            }
+            .into(),
+            surface::Literal::Numeric("10".into()).into(),
+          ],
+        }
+        .into()
+      ),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("f 10 (fun x -> x)").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Literal::Numeric("10".into()).into(),
+            surface::Abstraction {
+              parameters: vec![surface::Identifier::new("x")],
+              body: surface::Identifier::new("x").into(),
+            }
+            .into(),
+          ],
+        }
+        .into()
+      ),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("(g (fun x -> x)) 10").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Application {
+            abstraction: surface::Identifier::new("g").into(),
+            arguments: vec![surface::Abstraction {
+              parameters: vec![surface::Identifier::new("x")],
+              body: surface::Identifier::new("x").into(),
+            }
+            .into()],
+          }
+          .into(),
+          arguments: vec![surface::Literal::Numeric("10".into()).into()],
+        }
+        .into()
+      )
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("f (g (fun x -> x) 10) (fun x -> x) 10")
+      .with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(
+        surface::Application {
+          abstraction: surface::Identifier::new("f").into(),
+          arguments: vec![
+            surface::Application {
+              abstraction: surface::Identifier::new("g").into(),
+              arguments: vec![surface::Abstraction {
+                parameters: vec![surface::Identifier::new("x")],
+                body: surface::Identifier::new("x").into(),
+              }
+              .into()],
+            }
+            .into(),
+            surface::Abstraction {
+              parameters: vec![surface::Identifier::new("x")],
+              body: surface::Identifier::new("x").into(),
+            }
+            .into(),
+            surface::Literal::Numeric("10".into()).into(),
+          ],
+        }
+        .into()
+      ),
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
   fn can_parse_identifier()
   {
     let mut lexer = Lexer::from_str("foo").with_backtracking();
