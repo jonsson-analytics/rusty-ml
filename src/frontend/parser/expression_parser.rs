@@ -13,7 +13,7 @@ where
   Self: CanBacktrack,
   Self: LiteralParser,
 {
-  fn expect_expression(&mut self) -> Result<surface::Expression>
+  fn expect_expression_value(&mut self) -> Result<surface::Expression>
   {
     attempt!(self as s => {
       let _ = s.expect(Token::Symbol("("))?;
@@ -35,6 +35,23 @@ where
     });
     return Err(ParseError::Expected {
       expected: NodeType::Expression,
+    })
+  }
+
+  fn expect_expression(&mut self) -> Result<surface::Expression>
+  {
+    let expression = self.expect_expression_value()?;
+    let mut arguments = vec![];
+    while let Ok(argument) = self.expect_expression_value() {
+      arguments.push(argument);
+    }
+    return Ok(match arguments.is_empty() {
+      | true => expression,
+      | _ => surface::Application {
+        abstraction: expression,
+        arguments,
+      }
+      .into(),
     })
   }
 }
