@@ -1,5 +1,7 @@
+mod abstraction_parser;
 mod literal_parser;
 
+pub use abstraction_parser::*;
 pub use literal_parser::*;
 
 use super::*;
@@ -13,6 +15,10 @@ where
 {
   fn expect_expression(&mut self) -> Result<surface::Expression>
   {
+    attempt!(self as s => {
+      let abstraction = s.expect_abstraction()?;
+      return Ok(abstraction.into())
+    });
     attempt!(self as s => {
       let literal = s.expect_literal()?;
       return Ok(literal.into())
