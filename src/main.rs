@@ -26,7 +26,7 @@ type Result<T> = std::result::Result<T, CompilationError>;
 
 fn main() -> Result<()>
 {
-  let program = "fun x y -> x";
+  let program = "(fun x -> x) 10";
   println!("{}", program);
   let mut lexer = Lexer::from_str(program).with_backtracking();
   let s = lexer.expect_expression()?;
