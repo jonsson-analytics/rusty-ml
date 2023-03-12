@@ -2,6 +2,6 @@
 pub enum Literal
 {
   String(String),
-  Number(f64),
+  Numeric(String),
   Boolean(bool),
 }

@@ -13,9 +13,13 @@ where
 {
   fn expect_expression(&mut self) -> Result<surface::Expression>
   {
-    self
-      .expect_literal()
-      .map(|literal| literal.into())
+    attempt!(self as s => {
+      let literal = s.expect_literal()?;
+      Ok(literal.into())
+    });
+    return Err(ParseError::Expected {
+      expected: NodeType::Expression,
+    })
   }
 
   fn expect_identifier(&mut self) -> Result<surface::Identifier>

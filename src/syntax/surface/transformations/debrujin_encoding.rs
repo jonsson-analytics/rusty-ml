@@ -216,10 +216,10 @@ mod expressions
     );
 
     let mut context = Context::default();
-    let expression: surface::Expression = surface::Literal::Number(10.0).into();
+    let expression: surface::Expression = surface::Literal::Numeric("10.0".into()).into();
     assert_eq!(
       expression.transform(&mut context),
-      Ok(debrujin::Literal::Number(10.0).into())
+      Ok(debrujin::Literal::Numeric("10.0".into()).into())
     );
 
     let mut context = Context::default();

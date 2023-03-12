@@ -28,7 +28,7 @@ pub enum Value
 {
   String(String),
   Bool(bool),
-  F64(f64),
+  Numeric(String),
   Closure
   {
     stack: Vec<Value>,
@@ -142,7 +142,7 @@ impl TransformInto<Value> for debrujin::Literal
   {
     match self {
       | debrujin::Literal::String(value) => Value::String(value.clone()),
-      | debrujin::Literal::Number(value) => Value::F64(*value),
+      | debrujin::Literal::Numeric(value) => Value::Numeric(value.clone()),
       | debrujin::Literal::Boolean(value) => Value::Bool(*value),
     }
   }
@@ -164,9 +164,9 @@ mod literals
   #[test]
   fn number()
   {
-    let literal = debrujin::Literal::Number(3.14);
+    let literal = debrujin::Literal::Numeric("3.14".into());
     let mut context = Context::default();
-    assert_eq!(context.evaluate(literal), Value::F64(3.14));
+    assert_eq!(context.evaluate(literal), Value::Numeric("3.14".into()));
   }
 
   #[test]

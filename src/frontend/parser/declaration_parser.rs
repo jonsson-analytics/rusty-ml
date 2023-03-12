@@ -64,7 +64,7 @@ mod tests
           name: surface::Identifier {
             name: "foo".into(),
           },
-          value: surface::Literal::Number(10.0).into(),
+          value: surface::Literal::Numeric("10".into()).into(),
         }
         .into()
       )
