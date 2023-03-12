@@ -143,11 +143,11 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
     context: Self::Context<'a>,
   ) -> Result<debrujin::Expression, TransformError>
   {
-    let mut abstraction = self.abstraction.transform(context)?;
+    let mut abstraction = self.abstraction.debrujin_encoding(context)?;
     for argument in self.arguments.iter() {
       abstraction = debrujin::Application {
         abstraction,
-        argument: argument.transform(context)?,
+        argument: argument.debrujin_encoding(context)?,
       }
       .into();
     }
@@ -166,7 +166,7 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
   ) -> Result<debrujin::Expression, TransformError>
   {
     context.with_bindings(&self.parameters, |context| {
-      let mut body = self.body.transform(context)?;
+      let mut body = self.body.debrujin_encoding(context)?;
       for _ in self.parameters.iter() {
         body = debrujin::Abstraction {
           body,
@@ -196,7 +196,6 @@ impl TransformInto<Result<debrujin::TopLevel, TransformError>>
 mod expressions
 {
   use super::*;
-  use crate::transform_into::TransformInto;
 
   #[test]
   fn literals_remain_the_same()
@@ -205,7 +204,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::Boolean(true).into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(debrujin::Literal::Boolean(true).into())
     );
 
@@ -213,7 +212,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::Boolean(false).into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(debrujin::Literal::Boolean(false).into())
     );
 
@@ -221,7 +220,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::Numeric("10.0".into()).into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(debrujin::Literal::Numeric("10.0".into()).into())
     );
 
@@ -229,7 +228,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Literal::String("foo".into()).into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(debrujin::Literal::String("foo".into()).into())
     );
   }
@@ -241,7 +240,7 @@ mod expressions
     let expression: surface::Expression =
       surface::Identifier::new("foo").into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Err(TransformError::free_variable("foo"))
     );
   }
@@ -259,7 +258,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Err(TransformError::free_variable("foo"))
     );
   }
@@ -277,7 +276,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {
@@ -303,7 +302,7 @@ mod expressions
     }
     .into();
     assert_eq!(
-      expression.transform(&mut context),
+      expression.debrujin_encoding(&mut context),
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {
