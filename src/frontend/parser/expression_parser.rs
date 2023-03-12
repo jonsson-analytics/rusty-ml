@@ -72,10 +72,8 @@ mod spec
   }
 
   #[test]
-  fn can_parse_application()
+  fn can_parse_named_application_three_arguments()
   {
-    // todo: fix expectations
-
     let mut lexer = Lexer::from_str("f a b c").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -92,7 +90,11 @@ mod spec
       ),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_immediate_application_one_argument()
+  {
     let mut lexer = Lexer::from_str("(fun x -> x) 10").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -109,7 +111,11 @@ mod spec
       ),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_named_application_two_arguments_first_is_an_abstraction()
+  {
     let mut lexer = Lexer::from_str("f (fun x -> x) 10").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -129,7 +135,11 @@ mod spec
       ),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_named_application_two_arguments_second_is_an_abstraction()
+  {
     let mut lexer = Lexer::from_str("f 10 (fun x -> x)").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -149,7 +159,11 @@ mod spec
       ),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_curried_application()
+  {
     let mut lexer = Lexer::from_str("(g (fun x -> x)) 10").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -170,7 +184,11 @@ mod spec
       )
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_named_application_first_argument_is_an_application()
+  {
     let mut lexer = Lexer::from_str("f (g (fun x -> x) 10) (fun x -> x) 10")
       .with_backtracking();
     assert_eq!(
