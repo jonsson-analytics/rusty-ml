@@ -16,6 +16,12 @@ where
   fn expect_expression(&mut self) -> Result<surface::Expression>
   {
     attempt!(self as s => {
+      let _ = s.expect(Token::Symbol("("))?;
+      let inner_expression = s.expect_expression()?;
+      let _ = s.expect(Token::Symbol(")"))?;
+      return Ok(inner_expression)
+    });
+    attempt!(self as s => {
       let abstraction = s.expect_abstraction()?;
       return Ok(abstraction.into())
     });
