@@ -6,6 +6,17 @@ use crate::transform_into::TransformInto;
 
 pub struct Context
 {
+  free_name: usize,
+}
+
+impl Context
+{
+  pub fn free_name(&mut self) -> types::Variable
+  {
+    let free_name = self.free_name;
+    self.free_name += 1;
+    return types::Variable::Unnamed(free_name)
+  }
 }
 
 impl Default for Context
@@ -13,6 +24,7 @@ impl Default for Context
   fn default() -> Self
   {
     Self {
+      free_name: 0,
     }
   }
 }
