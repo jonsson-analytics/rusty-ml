@@ -47,6 +47,31 @@ mod spec
   use crate::frontend::lexer::Lexer;
 
   #[test]
+  fn can_parse_parentheses()
+  {
+    let mut lexer = Lexer::from_str("(foo)").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(surface::Identifier::new("foo").into()),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("((foo))").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(surface::Identifier::new("foo").into()),
+    );
+    assert_eq!(lexer.next(), None);
+
+    let mut lexer = Lexer::from_str("(((foo)))").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(surface::Identifier::new("foo").into()),
+    );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
   fn can_parse_identifier()
   {
     let mut lexer = Lexer::from_str("foo").with_backtracking();
