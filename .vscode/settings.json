@@ -1,3 +1,17 @@
 {
-  "rust-analyzer.inlayHints.parameterHints.enable": false
+  "rust-analyzer.inlayHints.parameterHints.enable": false,
+  "terminal.integrated.profiles.linux": {
+    "nu": {
+      "path": "nu",
+      "args": []
+    }
+  },
+  "terminal.integrated.defaultProfile.linux": "nu",
+  "terminal.integrated.localEchoExcludePrograms": [
+    "vim",
+    "vi",
+    "nano",
+    "tmux",
+    "zellij"
+  ]
 }

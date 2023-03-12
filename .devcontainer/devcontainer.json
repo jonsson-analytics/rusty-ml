@@ -17,7 +17,8 @@
 				"felicio.vscode-fold",
 				"GitHub.copilot",
 				"eamodio.gitlens",
-				"jasonlhy.hungry-delete"
+				"jasonlhy.hungry-delete",
+				"TheNuProjectContributors.vscode-nushell-lang"
 			]
 		}
 	},
