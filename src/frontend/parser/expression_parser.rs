@@ -344,7 +344,7 @@ mod spec
   #[test]
   fn can_parse_named_application_first_argument_is_an_application()
   {
-    let mut lexer = Lexer::from_str("f (g (fun x -> x) 10) (fun x -> x) 10")
+    let mut lexer = Lexer::from_str("f (g (fun x -> x) 10) (fun y -> y) 10")
       .with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
@@ -354,16 +354,19 @@ mod spec
           arguments: vec![
             surface::Application {
               abstraction: surface::Identifier::new("g").into(),
-              arguments: vec![surface::Abstraction {
-                parameters: vec![surface::Identifier::new("x")],
-                body: surface::Identifier::new("x").into(),
-              }
-              .into()],
+              arguments: vec![
+                surface::Abstraction {
+                  parameters: vec![surface::Identifier::new("x")],
+                  body: surface::Identifier::new("x").into(),
+                }
+                .into(),
+                surface::Literal::Numeric("10".into()).into(),
+              ],
             }
             .into(),
             surface::Abstraction {
-              parameters: vec![surface::Identifier::new("x")],
-              body: surface::Identifier::new("x").into(),
+              parameters: vec![surface::Identifier::new("y")],
+              body: surface::Identifier::new("y").into(),
             }
             .into(),
             surface::Literal::Numeric("10".into()).into(),
