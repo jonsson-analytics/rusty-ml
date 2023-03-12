@@ -20,8 +20,9 @@
 				"jasonlhy.hungry-delete"
 			]
 		}
-	}
+	},
 
+  "onCreateCommand": "./.devcontainer/on-create.sh",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
