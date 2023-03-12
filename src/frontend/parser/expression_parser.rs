@@ -225,13 +225,20 @@ mod spec
   }
 
   #[test]
-  fn can_parse_boolean_literal()
+  fn can_parse_boolean_literal_true()
   {
-    let mut lexer = Lexer::from_str("true false").with_backtracking();
+    let mut lexer = Lexer::from_str("true").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
       Ok(surface::Literal::Boolean(true).into())
     );
+    assert_eq!(lexer.next(), None);
+  }
+
+  #[test]
+  fn can_parse_boolean_literal_false()
+  {
+    let mut lexer = Lexer::from_str("false").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
       Ok(surface::Literal::Boolean(false).into())
