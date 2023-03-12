@@ -42,9 +42,7 @@ mod tests
       lexer.expect_val_binding(),
       Ok(
         surface::ValBinding {
-          name: surface::Identifier {
-            name: "foo".to_string()
-          },
+          name: surface::Identifier::new("foo"),
           value: surface::Literal::String("bar".into()).into(),
         }
         .into()
@@ -61,9 +59,7 @@ mod tests
       lexer.expect_val_binding(),
       Ok(
         surface::ValBinding {
-          name: surface::Identifier {
-            name: "foo".into(),
-          },
+          name: surface::Identifier::new("foo"),
           value: surface::Literal::Numeric("10".into()).into(),
         }
         .into()
@@ -80,9 +76,7 @@ mod tests
       lexer.expect_val_binding(),
       Ok(
         surface::ValBinding {
-          name: surface::Identifier {
-            name: "foo".into()
-          },
+          name: surface::Identifier::new("foo"),
           value: surface::Literal::Boolean(true).into(),
         }
         .into()
@@ -99,17 +93,10 @@ mod tests
       lexer.expect_val_binding(),
       Ok(
         surface::ValBinding {
-          name: surface::Identifier {
-            name: "f".into()
-          },
+          name: surface::Identifier::new("f"),
           value: surface::Abstraction {
-            parameters: vec![surface::Identifier {
-              name: "x".into()
-            }],
-            body: surface::Identifier {
-              name: "x".into()
-            }
-            .into(),
+            parameters: vec![surface::Identifier::new("x")],
+            body: surface::Identifier::new("x").into(),
           }
           .into(),
         }
