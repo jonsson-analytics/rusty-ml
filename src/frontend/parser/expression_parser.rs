@@ -47,7 +47,7 @@ mod spec
   use crate::frontend::lexer::Lexer;
 
   #[test]
-  fn can_parse_parentheses()
+  fn can_parse_parentheses_one_level()
   {
     let mut lexer = Lexer::from_str("(foo)").with_backtracking();
     assert_eq!(
@@ -55,14 +55,22 @@ mod spec
       Ok(surface::Identifier::new("foo").into()),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_parentheses_two_levels()
+  {
     let mut lexer = Lexer::from_str("((foo))").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
       Ok(surface::Identifier::new("foo").into()),
     );
     assert_eq!(lexer.next(), None);
+  }
 
+  #[test]
+  fn can_parse_parentheses_three_levels()
+  {
     let mut lexer = Lexer::from_str("(((foo)))").with_backtracking();
     assert_eq!(
       lexer.expect_expression(),
