@@ -15,25 +15,21 @@ where
   {
     attempt!(self as s => {
       let literal = s.expect_literal()?;
-      Ok(literal.into())
+      return Ok(literal.into())
+    });
+    attempt!(self as s => {
+      let identifier = s.expect_identifier()?;
+      return Ok(identifier.into())
     });
     return Err(ParseError::Expected {
       expected: NodeType::Expression,
-    })
-  }
-
-  fn expect_identifier(&mut self) -> Result<surface::Identifier>
-  {
-    let name = self.expect(Token::Identifier)?;
-    return Ok(surface::Identifier {
-      name: name.value().into(),
     })
   }
 }
 
 impl<Lexer> ExpressionParser for Lexer
 where
-  Self: Iterator<Item = Lexeme>,
+  Self: ExpectSyntax,
   Self: CanBacktrack,
 {
 }
@@ -43,6 +39,17 @@ mod spec
 {
   use super::*;
   use crate::frontend::lexer::Lexer;
+
+  #[test]
+  fn can_parse_identifier()
+  {
+    let mut lexer = Lexer::from_str("foo").with_backtracking();
+    assert_eq!(
+      lexer.expect_expression(),
+      Ok(surface::Identifier::new("foo").into())
+    );
+    assert_eq!(lexer.next(), None);
+  }
 
   #[test]
   fn can_parse_string_literal()

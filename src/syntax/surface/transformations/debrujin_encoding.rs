@@ -216,7 +216,8 @@ mod expressions
     );
 
     let mut context = Context::default();
-    let expression: surface::Expression = surface::Literal::Numeric("10.0".into()).into();
+    let expression: surface::Expression =
+      surface::Literal::Numeric("10.0".into()).into();
     assert_eq!(
       expression.transform(&mut context),
       Ok(debrujin::Literal::Numeric("10.0".into()).into())
@@ -235,10 +236,8 @@ mod expressions
   fn free_variable_simple_expression()
   {
     let mut context = Context::default();
-    let expression: surface::Expression = surface::Identifier {
-      name: "foo".into(),
-    }
-    .into();
+    let expression: surface::Expression =
+      surface::Identifier::new("foo").into();
     assert_eq!(
       expression.transform(&mut context),
       Err(TransformError::free_variable("foo"))
@@ -251,17 +250,10 @@ mod expressions
     let mut context = Context::default();
     let expression: surface::Expression = surface::Abstraction {
       parameters: vec![
-        surface::Identifier {
-          name: "x".into(),
-        },
-        surface::Identifier {
-          name: "y".into(),
-        },
+        surface::Identifier::new("x"),
+        surface::Identifier::new("y"),
       ],
-      body: surface::Identifier {
-        name: "foo".into(),
-      }
-      .into(),
+      body: surface::Identifier::new("foo").into(),
     }
     .into();
     assert_eq!(
@@ -276,17 +268,10 @@ mod expressions
     let mut context = Context::default();
     let expression: surface::Expression = surface::Abstraction {
       parameters: vec![
-        surface::Identifier {
-          name: "x".to_string(),
-        },
-        surface::Identifier {
-          name: "y".to_string(),
-        },
+        surface::Identifier::new("x"),
+        surface::Identifier::new("y"),
       ],
-      body: surface::Identifier {
-        name: "x".into(),
-      }
-      .into(),
+      body: surface::Identifier::new("x").into(),
     }
     .into();
     assert_eq!(
@@ -294,10 +279,7 @@ mod expressions
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {
-            body: debrujin::Identifier {
-              name: 1
-            }
-            .into(),
+            body: debrujin::Identifier::new(1).into(),
           }
           .into()
         }
@@ -312,17 +294,10 @@ mod expressions
     let mut context = Context::default();
     let expression: surface::Expression = surface::Abstraction {
       parameters: vec![
-        surface::Identifier {
-          name: "x".into(),
-        },
-        surface::Identifier {
-          name: "y".into(),
-        },
+        surface::Identifier::new("x"),
+        surface::Identifier::new("y"),
       ],
-      body: surface::Identifier {
-        name: "y".into(),
-      }
-      .into(),
+      body: surface::Identifier::new("y").into(),
     }
     .into();
     assert_eq!(
@@ -330,10 +305,7 @@ mod expressions
       Ok(
         debrujin::Abstraction {
           body: debrujin::Abstraction {
-            body: debrujin::Identifier {
-              name: 0
-            }
-            .into(),
+            body: debrujin::Identifier::new(0).into(),
           }
           .into()
         }
