@@ -1,3 +1,1 @@
-mod debrujin_encoding;
-
-pub use debrujin_encoding::*;
+pub mod debrujin_encoding;

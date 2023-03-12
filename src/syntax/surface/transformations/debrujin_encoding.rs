@@ -1,3 +1,5 @@
+use thiserror::Error;
+
 use crate::syntax::{
   debrujin,
   surface,
@@ -76,10 +78,10 @@ where
   }
 }
 
-
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Error)]
 pub enum TransformError
 {
+  #[error("free variable")]
   FreeVariable(String),
 }
 
