@@ -22,3 +22,13 @@ def g x -> x + 1;
 val a = f 10;
 val b = g 10;
 ```
+
+## Roadmap
+
+- implement function application in parser
+- implement pretty printer
+- implement REPL
+- implement ML style type inference
+- implement underlying CST for improved error messages
+- refactor test suite (remove redundancies; maybe with pretty printer?)
+- reduce use of copy
