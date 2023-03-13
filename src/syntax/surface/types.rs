@@ -1,6 +1,6 @@
 use super::*;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Variable
 {
   Named(Identifier),
@@ -16,40 +16,40 @@ impl From<Identifier> for Variable
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Polymorphic
+pub struct Abstraction
 {
-  pub name: Variable,
-  pub parameters: Vec<Type>,
+  pub parameter_type: Type,
+  pub return_type: Type,
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Type
 {
-  Polymorphic(Polymorphic),
   Variable(Variable),
+  Concrete(Identifier),
+  Abstraction(Box<Abstraction>)
 }
 
 impl Type
 {
-  pub fn monomorphic(name: Variable) -> Type
-  {
-    types::Polymorphic {
-      name,
-      parameters: vec![],
-    }
-    .into()
-  }
-
   pub fn abstraction(
     parameter_type: Type,
     return_type: Type,
   ) -> Type
   {
-    types::Polymorphic {
-      name: Identifier::new("->").into(),
-      parameters: vec![parameter_type, return_type],
+    types::Abstraction {
+      parameter_type,
+      return_type,
     }
     .into()
+  }
+}
+
+impl From<Identifier> for Type
+{
+  fn from(identifier: Identifier) -> Self
+  {
+    Self::Concrete(identifier)
   }
 }
 
@@ -61,11 +61,11 @@ impl From<Variable> for Type
   }
 }
 
-impl From<Polymorphic> for Type
+impl From<Abstraction> for Type
 {
-  fn from(polymorphic: Polymorphic) -> Self
+  fn from(abstraction: Abstraction) -> Self
   {
-    Self::Polymorphic(polymorphic)
+    Self::Abstraction(Box::new(abstraction))
   }
 }
 
