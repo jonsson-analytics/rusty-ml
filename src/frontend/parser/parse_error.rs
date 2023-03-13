@@ -1,9 +1,8 @@
 use thiserror::Error;
 
+use super::NodeType;
 use crate::frontend::lexemes::Lexeme;
 use crate::frontend::tokens::Token;
-
-use super::NodeType;
 
 #[derive(Debug, Clone, PartialEq, Error)]
 pub enum ParseError
@@ -20,7 +19,8 @@ pub enum ParseError
     actual: Lexeme,
   },
   #[error("expected syntax ...")]
-  Expected {
+  Expected
+  {
     expected: NodeType,
   },
 }

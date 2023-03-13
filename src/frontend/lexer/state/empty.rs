@@ -1,7 +1,7 @@
 use super::State;
+use crate::frontend::lexemes::Lexeme;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
-use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, PartialEq)]
 pub struct Empty;

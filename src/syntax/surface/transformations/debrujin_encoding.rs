@@ -143,7 +143,9 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
     context: Self::Context<'a>,
   ) -> Result<debrujin::Expression, TransformError>
   {
-    let mut abstraction = self.abstraction.debrujin_encoding(context)?;
+    let mut abstraction = self
+      .abstraction
+      .debrujin_encoding(context)?;
     for argument in self.arguments.iter() {
       abstraction = debrujin::Application {
         abstraction,
@@ -196,6 +198,7 @@ impl TransformInto<Result<debrujin::TopLevel, TransformError>>
 mod expressions
 {
   use pretty_assertions::assert_eq;
+
   use super::*;
 
   #[test]

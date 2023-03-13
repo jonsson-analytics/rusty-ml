@@ -1,6 +1,5 @@
-use crate::frontend::lexemes::Lexeme;
-
 use super::BacktrackingIterator;
+use crate::frontend::lexemes::Lexeme;
 
 pub trait WithBacktracking
 where

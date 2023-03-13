@@ -1,6 +1,5 @@
-use crate::frontend::lexemes::Lexeme;
-
 use super::state::State;
+use crate::frontend::lexemes::Lexeme;
 
 #[derive(Debug, PartialEq)]
 pub enum FeedableResult

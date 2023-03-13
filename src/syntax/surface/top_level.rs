@@ -1,6 +1,4 @@
-use super::{
-  ValBinding,
-};
+use super::ValBinding;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TopLevel

@@ -2,6 +2,7 @@
 mod parentheses
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]
@@ -133,6 +134,7 @@ mod parentheses
 mod comment
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]
@@ -185,6 +187,7 @@ mod comment
 mod string
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]
@@ -224,6 +227,7 @@ mod string
 mod identifier
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]
@@ -334,6 +338,7 @@ mod identifier
 mod numeric
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]
@@ -354,7 +359,10 @@ mod numeric
     assert_eq!(lexer.next(), Some(Lexeme::numeric("8")));
     assert_eq!(lexer.next(), Some(Lexeme::numeric("9")));
     assert_eq!(lexer.next(), Some(Lexeme::numeric("1234567890.123456890")));
-    assert_eq!(lexer.next(), Some(Lexeme::numeric("1,234,567,890.123,456,789,0")));
+    assert_eq!(
+      lexer.next(),
+      Some(Lexeme::numeric("1,234,567,890.123,456,789,0"))
+    );
     assert_eq!(lexer.next(), Some(Lexeme::malformed_numeric("1.1.1")));
     assert_eq!(lexer.next(), Some(Lexeme::identifier("10foo")));
     assert_eq!(lexer.next(), Some(Lexeme::identifier("foo10")));
@@ -367,6 +375,7 @@ mod numeric
 mod reserved_words
 {
   use pretty_assertions::assert_eq;
+
   use super::super::*;
 
   #[test]

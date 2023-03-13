@@ -1,4 +1,7 @@
-use super::{Identifier, Expression};
+use super::{
+  Expression,
+  Identifier,
+};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Abstraction

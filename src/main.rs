@@ -7,10 +7,11 @@ mod transform_into;
 use frontend::{
   ExpressionParser,
   Lexer,
-  WithBacktracking,
   ParseError,
+  WithBacktracking,
 };
-use syntax::{surface::transformations::debrujin_encoding::DebrujinEncoding, debrujin::transformations::Evaluate};
+use syntax::debrujin::transformations::Evaluate;
+use syntax::surface::transformations::debrujin_encoding::DebrujinEncoding;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -19,7 +20,9 @@ enum CompilationError
   #[error("failed to parse input")]
   ParseError(#[from] ParseError),
   #[error("failed to debrujin encode")]
-  TransformError(#[from] syntax::surface::transformations::debrujin_encoding::TransformError),
+  TransformError(
+    #[from] syntax::surface::transformations::debrujin_encoding::TransformError,
+  ),
 }
 
 type Result<T> = std::result::Result<T, CompilationError>;

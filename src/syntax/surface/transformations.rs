@@ -1,2 +1,2 @@
-pub mod debrujin_encoding;
 pub mod collect_types;
+pub mod debrujin_encoding;

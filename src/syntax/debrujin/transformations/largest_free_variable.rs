@@ -63,6 +63,7 @@ impl TransformInto<LFV> for debrujin::Abstraction
 mod abstraction
 {
   use pretty_assertions::assert_eq;
+
   use super::*;
 
   #[test]
@@ -111,6 +112,7 @@ impl TransformInto<LFV> for debrujin::Application
 mod application
 {
   use pretty_assertions::assert_eq;
+
   use super::*;
 
   #[test]
@@ -168,6 +170,7 @@ impl TransformInto<LFV> for debrujin::Identifier
 mod identifier
 {
   use pretty_assertions::assert_eq;
+
   use super::*;
 
   #[test]
