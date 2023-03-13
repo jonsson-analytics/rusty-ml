@@ -651,10 +651,4 @@ let-env config = {
   ]
 }
 
-load-env {
-  SHELL: (which nu | get 0 | get path)
-  EDITOR: (which code | get 0 | get path)
-  VISUAL: (which code | get 0 | get path)
-}
-
 source ~/.cache/starship/init.nu

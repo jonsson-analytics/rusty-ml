@@ -61,6 +61,13 @@ let-env NU_PLUGIN_DIRS = [
 # To add entries to PATH (on Windows you might use Path), you can use the following pattern:
 # let-env PATH = ($env.PATH | split row (char esep) | prepend '/some/path')
 
+load-env {
+  RUSTC_WRAPPER: sccache
+  SHELL: (which nu | get 0 | get path)
+  EDITOR: (which code | get 0 | get path)
+  VISUAL: (which code | get 0 | get path)
+}
+
 mkdir ~/.cache/starship
 starship init nu | save -f ~/.cache/starship/init.nu
 # starship preset nerd-font-symbols | save -f ~/.config/starship.toml
