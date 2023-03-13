@@ -93,18 +93,26 @@ fn is_numeric(input: &str) -> IsNumeric
 }
 
 #[cfg(test)]
-mod spec {
-    use super::{is_numeric, IsNumeric};
+mod spec
+{
+  use pretty_assertions::assert_eq;
+
+  use super::{
+    is_numeric,
+    IsNumeric,
+  };
 
   #[test]
-  fn input_is_identifier() {
+  fn input_is_identifier()
+  {
     assert_eq!(is_numeric("input"), IsNumeric::No);
     assert_eq!(is_numeric("foo10"), IsNumeric::No);
     assert_eq!(is_numeric("10foo"), IsNumeric::No);
   }
 
   #[test]
-  fn input_is_numeric() {
+  fn input_is_numeric()
+  {
     assert_eq!(is_numeric("0"), IsNumeric::Yes);
     assert_eq!(is_numeric("1"), IsNumeric::Yes);
     assert_eq!(is_numeric("2"), IsNumeric::Yes);
@@ -121,7 +129,8 @@ mod spec {
   }
 
   #[test]
-  fn input_is_malformed() {
+  fn input_is_malformed()
+  {
     assert_eq!(is_numeric("10.0.0"), IsNumeric::Malformed);
     assert_eq!(is_numeric("10.0.0.0"), IsNumeric::Malformed);
     assert_eq!(is_numeric("10.0.0.0.0"), IsNumeric::Malformed);

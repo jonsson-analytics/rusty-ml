@@ -151,6 +151,7 @@ impl TransformInto<Value> for debrujin::Literal
 #[cfg(test)]
 mod literals
 {
+  use pretty_assertions::assert_eq;
   use super::*;
 
   #[test]
@@ -196,6 +197,7 @@ impl TransformInto<Value> for debrujin::Identifier
 #[cfg(test)]
 mod identifiers
 {
+  use pretty_assertions::assert_eq;
   use super::*;
 
   #[test]
@@ -242,6 +244,7 @@ impl TransformInto<Value> for debrujin::Abstraction
 #[cfg(test)]
 mod abstractions
 {
+  use pretty_assertions::assert_eq;
   use super::*;
 
   #[test]
@@ -324,6 +327,7 @@ impl TransformInto<Value> for debrujin::Application
 #[cfg(test)]
 mod application
 {
+  use pretty_assertions::assert_eq;
   use super::*;
 
   #[test]

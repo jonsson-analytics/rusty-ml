@@ -30,6 +30,8 @@ where
 #[cfg(test)]
 mod tests
 {
+  use pretty_assertions::assert_eq;
+
   use super::super::*;
   use crate::frontend::lexer::Lexer;
   use crate::syntax::surface;

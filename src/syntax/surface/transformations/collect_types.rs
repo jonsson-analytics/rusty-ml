@@ -6,6 +6,7 @@ use crate::transform_into::TransformInto;
 
 pub struct Context
 {
+  stack: Vec<types::Variable>,
   free_name: usize,
 }
 
@@ -17,6 +18,22 @@ impl Context
     self.free_name += 1;
     return types::Variable::Unnamed(free_name)
   }
+
+  fn with_bindings<Result>(
+    &mut self,
+    bindings: &[types::Variable],
+    computation: impl FnOnce(&mut Self) -> Result,
+  ) -> Result
+  {
+    for binding in bindings {
+      self.stack.push(binding.clone());
+    }
+    let result = computation(self);
+    for _ in bindings {
+      self.stack.pop();
+    }
+    return result
+  }
 }
 
 impl Default for Context
@@ -24,6 +41,7 @@ impl Default for Context
   fn default() -> Self
   {
     Self {
+      stack: Vec::new(),
       free_name: 0,
     }
   }

@@ -195,6 +195,7 @@ impl TransformInto<Result<debrujin::TopLevel, TransformError>>
 #[cfg(test)]
 mod expressions
 {
+  use pretty_assertions::assert_eq;
   use super::*;
 
   #[test]

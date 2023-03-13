@@ -25,6 +25,7 @@ where
 #[cfg(test)]
 mod spec
 {
+  use pretty_assertions::assert_eq;
   use super::*;
   use crate::frontend::lexer::Lexer;
 

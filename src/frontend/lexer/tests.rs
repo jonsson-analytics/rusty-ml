@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod parentheses
 {
+  use pretty_assertions::assert_eq;
   use super::super::*;
 
   #[test]
@@ -131,6 +132,7 @@ mod parentheses
 #[cfg(test)]
 mod comment
 {
+  use pretty_assertions::assert_eq;
   use super::super::*;
 
   #[test]
@@ -185,6 +187,7 @@ mod comment
 #[cfg(test)]
 mod string
 {
+  use pretty_assertions::assert_eq;
   use super::super::*;
 
   #[test]
