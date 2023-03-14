@@ -3,9 +3,18 @@
 {
 	"name": "Debian",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "cacheFrom": "ghcr.io/jonsson-nils/devcontainer-rust:latest",
+  },
 	"features": {
-		"ghcr.io/devcontainers/features/rust:1": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"azureDnsAutoDetection": true,
+			"installDockerBuildx": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "v2"
+		}
 	},
 	"customizations": {
 		"vscode": {
@@ -23,7 +32,7 @@
 		}
 	},
 
-  "onCreateCommand": "./.devcontainer/on-create.sh",
+  "onCreateCommand": "bash ./.devcontainer/on-create.bash",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 

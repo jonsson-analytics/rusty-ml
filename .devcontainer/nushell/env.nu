@@ -39,7 +39,9 @@ load-env {
   VISUAL: (which code | get 0 | get path)
 }
 
-mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
-# starship preset nerd-font-symbols | save -f ~/.config/starship.toml
+mkdir ~/.cache/nushell/generated
+
+starship init nu | save -f ~/.cache/nushell/generated/starship.nu
 starship preset tokyo-night | save -f ~/.config/starship.toml
+
+broot --print-shell-function nushell | save -f ~/.cache/nushell/generated/broot.nu

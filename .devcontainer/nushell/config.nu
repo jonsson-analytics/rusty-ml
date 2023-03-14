@@ -646,5 +646,5 @@ let-env config = {
   ]
 }
 
-
-source ~/.cache/starship/init.nu
+source ~/.cache/nushell/generated/starship.nu
+source ~/.cache/nushell/generated/broot.nu
