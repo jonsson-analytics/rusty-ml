@@ -2,6 +2,7 @@
 
 ## Roadmap
 
+- setup CI pipeline
 - implement pretty printer
 - implement REPL
 - implement underlying CST for improved error messages
