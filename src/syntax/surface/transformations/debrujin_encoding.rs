@@ -40,7 +40,7 @@ impl Context
       .iter()
       .rev()
       .position(|binding| name == binding)
-      .ok_or_else(|| TransformError::free_variable(name.clone()))
+      .ok_or_else(|| TransformError::free_variable(name))
   }
 }
 
