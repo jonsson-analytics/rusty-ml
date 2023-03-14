@@ -3,14 +3,12 @@ use crate::frontend::lexemes::Lexeme;
 use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
 
-#[derive(Debug, PartialEq)]
-#[derive(Default)]
+#[derive(Debug, PartialEq, Default)]
 pub struct StringLiteral
 {
   buffer: Vec<char>,
   escaped: bool,
 }
-
 
 
 impl Feedable for StringLiteral

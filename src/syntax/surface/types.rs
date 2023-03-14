@@ -27,7 +27,7 @@ pub enum Type
 {
   Variable(Variable),
   Concrete(Identifier),
-  Abstraction(Box<Abstraction>)
+  Abstraction(Box<Abstraction>),
 }
 
 impl Type

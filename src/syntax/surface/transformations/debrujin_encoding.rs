@@ -45,7 +45,6 @@ impl Context
 }
 
 
-
 pub trait DebrujinEncoding<'a, Representation>
 {
   fn debrujin_encoding(

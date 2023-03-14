@@ -42,12 +42,10 @@ mod tests
     let mut lexer = Lexer::from_str("val foo = `bar` ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
-      Ok(
-        surface::ValBinding {
-          name: surface::Identifier::new("foo"),
-          value: surface::Literal::String("bar".into()).into(),
-        }
-      )
+      Ok(surface::ValBinding {
+        name: surface::Identifier::new("foo"),
+        value: surface::Literal::String("bar".into()).into(),
+      })
     );
     assert_eq!(lexer.next(), None);
   }
@@ -58,12 +56,10 @@ mod tests
     let mut lexer = Lexer::from_str("val foo = 10 ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
-      Ok(
-        surface::ValBinding {
-          name: surface::Identifier::new("foo"),
-          value: surface::Literal::Numeric("10".into()).into(),
-        }
-      )
+      Ok(surface::ValBinding {
+        name: surface::Identifier::new("foo"),
+        value: surface::Literal::Numeric("10".into()).into(),
+      })
     );
     assert_eq!(lexer.next(), None);
   }
@@ -74,12 +70,10 @@ mod tests
     let mut lexer = Lexer::from_str("val foo = true ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
-      Ok(
-        surface::ValBinding {
-          name: surface::Identifier::new("foo"),
-          value: surface::Literal::Boolean(true).into(),
-        }
-      )
+      Ok(surface::ValBinding {
+        name: surface::Identifier::new("foo"),
+        value: surface::Literal::Boolean(true).into(),
+      })
     );
     assert_eq!(lexer.next(), None);
   }
@@ -90,16 +84,14 @@ mod tests
     let mut lexer = Lexer::from_str("val f = fun x -> x ;").with_backtracking();
     assert_eq!(
       lexer.expect_val_binding(),
-      Ok(
-        surface::ValBinding {
-          name: surface::Identifier::new("f"),
-          value: surface::Abstraction {
-            parameters: vec![surface::Identifier::new("x")],
-            body: surface::Identifier::new("x").into(),
-          }
-          .into(),
+      Ok(surface::ValBinding {
+        name: surface::Identifier::new("f"),
+        value: surface::Abstraction {
+          parameters: vec![surface::Identifier::new("x")],
+          body: surface::Identifier::new("x").into(),
         }
-      )
+        .into(),
+      })
     );
     assert_eq!(lexer.next(), None);
   }

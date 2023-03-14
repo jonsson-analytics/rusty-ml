@@ -79,7 +79,8 @@ impl Context
     self
       .stack
       .iter()
-      .rev().nth(name)
+      .rev()
+      .nth(name)
       .cloned()
   }
 
@@ -98,7 +99,6 @@ impl Context
       .collect()
   }
 }
-
 
 
 impl TransformInto<Value> for debrujin::Expression
