@@ -4,22 +4,14 @@ use crate::frontend::lexer::feedable::Feedable;
 use crate::frontend::lexer::feedable_result::FeedableResult;
 
 #[derive(Debug, PartialEq)]
+#[derive(Default)]
 pub struct StringLiteral
 {
   buffer: Vec<char>,
   escaped: bool,
 }
 
-impl Default for StringLiteral
-{
-  fn default() -> Self
-  {
-    Self {
-      buffer: vec![],
-      escaped: false,
-    }
-  }
-}
+
 
 impl Feedable for StringLiteral
 {

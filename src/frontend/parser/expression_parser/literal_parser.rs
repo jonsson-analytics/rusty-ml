@@ -23,7 +23,7 @@ where
     attempt!(self as s => s.expect_string_literal());
     attempt!(self as s => s.expect_boolean_literal());
     attempt!(self as s => s.expect_numeric_literal());
-    return Err(ParseError::Expected {
+    Err(ParseError::Expected {
       expected: NodeType::Literal,
     })
   }

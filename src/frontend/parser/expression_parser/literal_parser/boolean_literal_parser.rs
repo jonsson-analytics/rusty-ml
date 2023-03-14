@@ -9,7 +9,7 @@ where
   {
     attempt!(self as s => s.expect_boolean_true());
     attempt!(self as s => s.expect_boolean_false());
-    return Err(ParseError::Expected {
+    Err(ParseError::Expected {
       expected: NodeType::BooleanLiteral,
     })
   }

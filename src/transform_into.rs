@@ -2,8 +2,8 @@ pub trait TransformInto<Representation>
 {
   type Context<'a>;
 
-  fn transform<'a>(
+  fn transform(
     &self,
-    context: Self::Context<'a>,
+    context: Self::Context<'_>,
   ) -> Representation;
 }

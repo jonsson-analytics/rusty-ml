@@ -6,6 +6,7 @@ use crate::syntax::{
 };
 use crate::transform_into::TransformInto;
 
+#[derive(Default)]
 pub struct Context
 {
   stack: Vec<String>,
@@ -26,7 +27,7 @@ impl Context
     for _ in bindings {
       self.stack.pop();
     }
-    return result
+    result
   }
 
   fn lookup(
@@ -43,15 +44,7 @@ impl Context
   }
 }
 
-impl Default for Context
-{
-  fn default() -> Self
-  {
-    Self {
-      stack: Vec::new(),
-    }
-  }
-}
+
 
 pub trait DebrujinEncoding<'a, Representation>
 {
@@ -138,9 +131,9 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
 {
   type Context<'a> = &'a mut Context;
 
-  fn transform<'a>(
+  fn transform(
     &self,
-    context: Self::Context<'a>,
+    context: Self::Context<'_>,
   ) -> Result<debrujin::Expression, TransformError>
   {
     let mut abstraction = self
@@ -153,7 +146,7 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
       }
       .into();
     }
-    return Ok(abstraction)
+    Ok(abstraction)
   }
 }
 
@@ -162,9 +155,9 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
 {
   type Context<'a> = &'a mut Context;
 
-  fn transform<'a>(
+  fn transform(
     &self,
-    context: Self::Context<'a>,
+    context: Self::Context<'_>,
   ) -> Result<debrujin::Expression, TransformError>
   {
     context.with_bindings(&self.parameters, |context| {
@@ -175,7 +168,7 @@ impl TransformInto<Result<debrujin::Expression, TransformError>>
         }
         .into();
       }
-      return Ok(body)
+      Ok(body)
     })
   }
 }
@@ -185,9 +178,9 @@ impl TransformInto<Result<debrujin::TopLevel, TransformError>>
 {
   type Context<'a> = &'a mut Vec<String>;
 
-  fn transform<'a>(
+  fn transform(
     &self,
-    context: Self::Context<'a>,
+    _context: Self::Context<'_>,
   ) -> Result<debrujin::TopLevel, TransformError>
   {
     todo!()

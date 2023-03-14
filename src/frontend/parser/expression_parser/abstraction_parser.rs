@@ -16,7 +16,7 @@ where
     }
     let _ = self.expect(Token::Keyword("->"))?;
     let body = self.expect_expression()?;
-    return Ok(surface::Abstraction {
+    Ok(surface::Abstraction {
       parameters,
       body,
     })

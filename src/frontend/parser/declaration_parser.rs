@@ -13,7 +13,7 @@ where
     let _ = self.expect(Token::Keyword("="))?;
     let value = self.expect_expression()?;
     let _ = self.expect(Token::Keyword(";"))?;
-    return Ok(surface::ValBinding {
+    Ok(surface::ValBinding {
       name,
       value,
     })
@@ -47,7 +47,6 @@ mod tests
           name: surface::Identifier::new("foo"),
           value: surface::Literal::String("bar".into()).into(),
         }
-        .into()
       )
     );
     assert_eq!(lexer.next(), None);
@@ -64,7 +63,6 @@ mod tests
           name: surface::Identifier::new("foo"),
           value: surface::Literal::Numeric("10".into()).into(),
         }
-        .into()
       )
     );
     assert_eq!(lexer.next(), None);
@@ -81,7 +79,6 @@ mod tests
           name: surface::Identifier::new("foo"),
           value: surface::Literal::Boolean(true).into(),
         }
-        .into()
       )
     );
     assert_eq!(lexer.next(), None);
@@ -102,7 +99,6 @@ mod tests
           }
           .into(),
         }
-        .into()
       )
     );
     assert_eq!(lexer.next(), None);

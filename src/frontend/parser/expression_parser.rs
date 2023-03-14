@@ -19,21 +19,21 @@ where
       let _ = s.expect(Token::Symbol("("))?;
       let inner_expression = s.expect_expression()?;
       let _ = s.expect(Token::Symbol(")"))?;
-      return Ok(inner_expression)
+      Ok(inner_expression)
     });
     attempt!(self as s => {
       let abstraction = s.expect_abstraction()?;
-      return Ok(abstraction.into())
+      Ok(abstraction.into())
     });
     attempt!(self as s => {
       let literal = s.expect_literal()?;
-      return Ok(literal.into())
+      Ok(literal.into())
     });
     attempt!(self as s => {
       let identifier = s.expect_identifier()?;
-      return Ok(identifier.into())
+      Ok(identifier.into())
     });
-    return Err(ParseError::Expected {
+    Err(ParseError::Expected {
       expected: NodeType::Expression,
     })
   }
@@ -45,7 +45,7 @@ where
     while let Ok(argument) = self.expect_expression_value() {
       arguments.push(argument);
     }
-    return Ok(match arguments.is_empty() {
+    Ok(match arguments.is_empty() {
       | true => expression,
       | _ => surface::Application {
         abstraction: expression,

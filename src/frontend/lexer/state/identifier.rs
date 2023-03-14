@@ -85,7 +85,7 @@ fn is_numeric(input: &str) -> IsNumeric
     | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | ',' => false,
     | _ => true,
   });
-  return match is_numeric {
+  match is_numeric {
     | true if dots > 1 => IsNumeric::Malformed,
     | true => IsNumeric::Yes,
     | _ => IsNumeric::No,

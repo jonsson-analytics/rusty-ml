@@ -41,7 +41,7 @@ where
     }
     let next = self.buffer.get(self.cursor).cloned()?;
     self.cursor += 1;
-    return Some(next)
+    Some(next)
   }
 }
 
@@ -56,10 +56,10 @@ where
   {
     let cursor = self.cursor;
     let result = computation(self);
-    if let Err(_) = result {
+    if result.is_err() {
       self.cursor = cursor;
     }
-    return result
+    result
   }
 }
 

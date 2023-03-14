@@ -16,17 +16,16 @@ where
   {
     self
       .next()
-      .ok_or_else(|| ParseError::UnexpectedEndOfInput {
+      .ok_or(ParseError::UnexpectedEndOfInput {
         expected,
       })
-      .map(|lexeme| match () {
+      .and_then(|lexeme| match () {
         | _ if lexeme.token() == &expected => Ok(lexeme),
         | _ => Err(ParseError::UnexpectedToken {
           expected,
           actual: lexeme,
         }),
       })
-      .flatten()
   }
 }
 

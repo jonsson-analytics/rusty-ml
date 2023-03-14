@@ -21,7 +21,7 @@ where
   ) -> usize
   {
     let LFV(name) = self.transform(context);
-    return name
+    name
   }
 }
 

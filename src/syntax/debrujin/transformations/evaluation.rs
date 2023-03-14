@@ -36,6 +36,7 @@ pub enum Value
   },
 }
 
+#[derive(Default)]
 pub struct Context
 {
   stack: Vec<Value>,
@@ -66,7 +67,7 @@ impl Context
     for _ in 0 .. closure.len() {
       self.stack.pop();
     }
-    return result
+    result
   }
 
   pub fn lookup(
@@ -78,9 +79,7 @@ impl Context
     self
       .stack
       .iter()
-      .rev()
-      .skip(name)
-      .next()
+      .rev().nth(name)
       .cloned()
   }
 
@@ -100,15 +99,7 @@ impl Context
   }
 }
 
-impl Default for Context
-{
-  fn default() -> Self
-  {
-    Self {
-      stack: Vec::new(),
-    }
-  }
-}
+
 
 impl TransformInto<Value> for debrujin::Expression
 {
@@ -191,7 +182,7 @@ impl TransformInto<Value> for debrujin::Identifier
   {
     context
       .lookup(self.name)
-      .expect(format!("unbound identifier: {}", self.name).as_str())
+      .unwrap_or_else(|| panic!("unbound identifier: {}", self.name))
   }
 }
 
@@ -322,7 +313,7 @@ impl TransformInto<Value> for debrujin::Application
         stack,
         body,
       } => context.load(stack.as_slice(), |context| {
-        return context.load(&[argument], |context| body.transform(context))
+        context.load(&[argument], |context| body.transform(context))
       }),
       | _ => panic!("not a closure"),
     }
